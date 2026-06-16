@@ -6,9 +6,9 @@ This project is designed to help teams notice early warning signs, such as overd
 
 ## Project Summary
 
-Operational teams often track work across tickets, handoffs, priorities, reviews, and status updates. The problem is not always a lack of data. The harder problem is knowing which activity signals deserve attention before an issue becomes expensive, visible, or difficult to recover from.
+Operational teams often track work across tickets, handoffs, priorities, reviews, and status updates. The challenge is not always a lack of data. The harder problem is knowing which activity signals deserve attention before an issue becomes expensive, visible, or difficult to recover from.
 
-This repository documents a Phase 1 prototype for operational risk review. It uses transparent rules instead of black-box prediction so that every score and flag can be explained, challenged, and adjusted.
+This repository documents a Phase 1 framework for operational risk review. It uses transparent rules instead of black-box prediction so that every score and flag can be explained, challenged, and adjusted.
 
 ## Problem It Solves
 
@@ -43,7 +43,7 @@ Based on the current repository files, this project defines:
 
 A team lead reviews weekly operational activity and wants to know which items need attention before the next leadership meeting.
 
-Instead of reviewing every item manually, the system would help identify work that has risk signals such as:
+Instead of reviewing every item manually, the system helps identify work that has risk signals such as:
 
 - The item is overdue
 - The item has moved between several owners
@@ -69,11 +69,11 @@ flowchart LR
 4. Thresholds classify items as stable, watch, or at risk.
 5. The result is summarized for review and escalation discussions.
 
-## Data or Sample Inputs
+## Data Inputs
 
-The repository currently documents the expected data organization rather than providing a full sample dataset.
+The repository currently documents the expected data organization and scoring framework rather than providing a live dataset.
 
-Planned input fields may include:
+Example operational fields:
 
 | Field | Purpose |
 | --- | --- |
@@ -109,39 +109,31 @@ The score is designed to support human review. It is not intended to automate de
 
 See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed scoring notes.
 
-## Example Output
+## Example Walkthrough
 
-Example decision-support output format:
-
-| Item ID | Score | Flag | Explanation | Suggested Review |
-| --- | ---: | --- | --- | --- |
-| OPS-1042 | 68 | At Risk | High priority item is overdue and has multiple handoffs | Confirm owner, review blocker, and decide whether escalation is needed |
-| OPS-1087 | 44 | Watch | Moderate overdue signal with one rework cycle | Monitor in next weekly review |
-| OPS-1110 | 18 | Stable | No major signal based on current rule set | Continue normal tracking |
-
-## Demo / Screenshots
-
-Screenshots are not included yet. Recommended placeholders for a future portfolio update:
+The example below shows how the framework could evaluate a small set of operational items during a weekly review.
 
 ### Sample Operational Input
 
-Add a screenshot or table showing a small set of operational items with priority, due date, owner, handoff count, and rework count.
+| Item ID | Status | Priority Weight | Overdue Days | Handoff Count | Rework Count |
+| --- | --- | ---: | ---: | ---: | ---: |
+| OPS-1042 | In Review | 50 | 120 | 8 | 6 |
+| OPS-1087 | Open | 50 | 60 | 8 | 8 |
+| OPS-1110 | In Progress | 20 | 20 | 1 | 0 |
 
-### Generated Risk Flags
+### Calculated Risk Output
 
-Add a screenshot showing which items were classified as stable, watch, or at risk.
+| Item ID | Risk Score | Flag | Explanation | Suggested Review |
+| --- | ---: | --- | --- | --- |
+| OPS-1042 | 61 | At Risk | High-priority item is significantly overdue, has multiple handoffs, and includes rework | Confirm current owner, identify blocker, and decide whether escalation is needed |
+| OPS-1087 | 37 | Watch | Item has moderate overdue, handoff, and rework signals | Monitor in the next weekly review and confirm ownership |
+| OPS-1110 | 12 | Stable | Current signals do not indicate immediate review risk | Continue normal tracking |
 
-### Risk Score or Summary Output
+### Why OPS-1042 Was Flagged
 
-Add a screenshot showing the calculated risk score and a short explanation for each flagged item.
+OPS-1042 was flagged because several operational signals are present at the same time. The item is overdue, high priority, has moved through multiple handoffs, and has a rework signal. Any one of those signals might be manageable on its own, but together they suggest a higher chance of delay, unclear accountability, or process friction.
 
-### Reporting / Dashboard-Style Output
-
-Add a screenshot or mock report showing a weekly risk summary, count of at-risk items, watch-list items, and escalation candidates.
-
-### Why Something Was Flagged
-
-Add a screenshot or note showing the logic trail, such as: "Flagged because item is high priority, 12 days overdue, reopened twice, and transferred across three owners."
+The flag does not mean the item has failed. It means the item should be reviewed before it becomes a larger operational issue.
 
 ## Repository Structure
 
@@ -152,7 +144,7 @@ Add a screenshot or note showing the logic trail, such as: "Flagged because item
 +-- governance/    # Assumptions, limitations, exclusions, and failure modes
 +-- logic/         # Deterministic risk scoring model
 +-- reporting/     # Decision brief and reporting concepts
-+-- README.md      # Portfolio overview and project explanation
++-- README.md      # Public project overview
 ```
 
 ## Tech Stack
@@ -198,28 +190,9 @@ This project helped me practice translating an operations problem into a structu
 - Build a simple dashboard-style report
 - Add calibration notes showing how thresholds could be tuned over time
 - Document example escalation workflows
-- Add screenshots after sample inputs and reports are created
 
 ## Status
 
-Phase 1 prototype. The repository currently documents the operating model, risk logic, reporting intent, and governance limitations. It is not deployed, production-ready, or connected to live operational systems.
+Phase 1 prototype/framework. The repository currently documents the operating model, risk logic, reporting intent, and governance limitations.
 
-## GitHub About Description
-
-Deterministic operational risk prototype that turns activity signals into explainable flags, risk scores, and review-ready summaries for operations, reporting, and process improvement.
-
-## Suggested GitHub Topics
-
-`operational-risk`, `decision-support`, `business-analytics`, `process-improvement`, `risk-scoring`, `operations`, `reporting`, `governance`, `data-analytics`, `portfolio-project`
-
-## Resume Bullet Options
-
-**Technical version:** Built a documentation-first operational risk scoring prototype using deterministic business rules, explainable thresholds, and traceable input-to-output logic for risk review.
-
-**Business/process improvement version:** Designed an operational risk review framework that converts overdue work, handoffs, priority, and rework signals into actionable flags for escalation and process improvement discussions.
-
-**Balanced internship-friendly version:** Created a portfolio-ready decision-support prototype that translates operational activity data into risk scores, explainable flags, and leadership-style summaries for business technology and operations use cases.
-
-## Interview Answer: "Tell Me About This Project"
-
-This project is an operational risk decision-support prototype. I built it to show how routine activity signals, like overdue work, repeated handoffs, high-priority items, and rework, can be converted into simple risk flags and review summaries. The goal is not to automate decisions or predict the future. The goal is to help a team see early warning signs sooner, understand why something was flagged, and have a clearer conversation about escalation or process improvement.
+This project is not deployed, production-ready, or connected to live operational systems. It is designed to support human review, not automated decisions.
