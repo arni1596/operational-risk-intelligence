@@ -1,56 +1,44 @@
 # Operational Risk & Decision Intelligence System
 
-A deterministic decision-support prototype for turning routine operational activity signals into explainable risk flags, risk scores, and decision-ready summaries.
+A documentation-first operational risk and decision-support prototype that turns routine activity signals into explainable risk flags, risk scores, and review-ready summaries.
 
-This project is designed to help teams notice early warning signs, such as overdue work, repeated handoffs, high-priority backlog, and rework, before they become larger operational problems.
+The project demonstrates how operational data can be organized into a transparent review framework that helps teams identify early warning signs before they become larger delivery, quality, or accountability problems.
 
 ## Project Summary
 
-Operational teams often track work across tickets, handoffs, priorities, reviews, and status updates. The challenge is not always a lack of data. The harder problem is knowing which activity signals deserve attention before an issue becomes expensive, visible, or difficult to recover from.
+Operational teams generate activity data through tickets, cases, handoffs, status changes, due dates, and rework. The challenge is not simply collecting that data. It is deciding which signals deserve attention and explaining why.
 
-This repository documents a Phase 1 framework for operational risk review. It uses transparent rules instead of black-box prediction so that every score and flag can be explained, challenged, and adjusted.
+This Phase 1 prototype defines a deterministic approach to operational risk review. It uses documented business rules rather than predictive or black-box models, allowing each result to be traced back to the signals that produced it.
 
 ## Problem It Solves
 
-Teams can miss early warning signs when operational work is spread across many systems or reviewed only after problems become obvious.
+Operational issues often develop gradually across disconnected workflows. A single overdue task may not be concerning, but an overdue, high-priority item with repeated handoffs and rework may require immediate review.
 
-This project addresses that gap by showing how a team could:
+The framework is designed to help teams:
 
-- Convert operational activity into structured risk indicators
-- Flag items that may need review or escalation
-- Explain why an item was flagged
-- Summarize risk in a format that supports management review
-- Preserve assumptions, limitations, and traceability
+- Convert routine operational activity into consistent risk indicators
+- Focus review time on items with stronger warning signals
+- Explain why an item was classified as stable, watch, or at risk
+- Support escalation and process-improvement conversations
+- Preserve traceability between inputs, rules, and outputs
 
-## Why This Matters
+## Why It Matters
 
-In operations, risk often builds gradually. An item that is overdue, high priority, reopened, and passed between multiple owners may look like just another task in a queue. In context, those signals can point to process friction, unclear accountability, quality issues, or escalation risk.
+Operational risk can remain hidden when teams rely only on status labels, backlog totals, or manual review. Combining several activity signals provides a clearer view of potential process friction, unclear ownership, delivery delay, and quality risk.
 
-This prototype focuses on practical decision support: making risk easier to see, explain, and discuss.
+This project focuses on practical visibility rather than prediction. Its purpose is to make emerging risk easier to identify, communicate, and review.
 
 ## What It Does
 
-Based on the current repository files, this project defines:
+The current prototype documents:
 
-- A documented scoring model for operational risk
-- Risk factors such as overdue days, ownership handoffs, priority, and rework count
-- Thresholds for stable, watch, and at-risk items
-- A governance-first approach with limitations and failure modes documented
-- A reporting concept focused on decision briefs and leadership review
-- A data structure concept that separates raw and validated data for traceability
-
-## Example Use Case
-
-A team lead reviews weekly operational activity and wants to know which items need attention before the next leadership meeting.
-
-Instead of reviewing every item manually, the system helps identify work that has risk signals such as:
-
-- The item is overdue
-- The item has moved between several owners
-- The item is high priority
-- The item has been reopened or reworked
-
-The output is not an automatic decision. It is a clearer starting point for review, escalation, and process improvement conversations.
+- Operational signals used for risk review
+- A deterministic risk-scoring model
+- Stable, watch, and at-risk thresholds
+- Explainable reasons for each classification
+- A reporting flow for review-ready summaries
+- Governance assumptions, limitations, and failure modes
+- Separation of raw and validated data for traceability
 
 ## How It Works
 
@@ -58,34 +46,18 @@ The output is not an automatic decision. It is a clearer starting point for revi
 flowchart LR
     A["Operational Activity Data"] --> B["Signal Detection"]
     B --> C["Risk Rules"]
-    C --> D["Risk Score / Flag"]
+    C --> D["Risk Score and Flag"]
     D --> E["Decision Summary"]
     E --> F["Reporting Output"]
 ```
 
-1. Operational activity data is separated into raw and validated data sources.
-2. Relevant signals are identified, such as overdue days, handoffs, priority, and rework count.
+1. Operational activity data is collected and validated.
+2. Relevant signals are identified, including overdue days, priority, handoffs, and rework.
 3. Deterministic rules convert those signals into a risk score.
-4. Thresholds classify items as stable, watch, or at risk.
-5. The result is summarized for review and escalation discussions.
+4. Thresholds classify each item as stable, watch, or at risk.
+5. The result is summarized with an explanation for human review.
 
-## Data Inputs
-
-The repository currently documents the expected data organization and scoring framework rather than providing a live dataset.
-
-Example operational fields:
-
-| Field | Purpose |
-| --- | --- |
-| Item ID | Unique operational item or case reference |
-| Status | Current state of the item |
-| Priority | Business urgency or severity |
-| Due Date | Used to calculate overdue days |
-| Owner / Team | Used to track accountability and handoffs |
-| Handoff Count | Number of ownership or team transfers |
-| Rework Count | Number of reopenings, corrections, or repeat work cycles |
-
-## Risk Logic / Decision Rules
+## Risk Scoring Logic
 
 The documented scoring model is:
 
@@ -97,21 +69,21 @@ Risk Score =
 + (Rework Count x 0.1)
 ```
 
-Current thresholds:
+The current review thresholds are:
 
-| Score Range | Label | Meaning |
-| --- | --- | --- |
-| 0-30 | Stable | No immediate risk signal based on current rules |
-| 31-60 | Watch | Review recommended |
+| Score | Classification | Review Meaning |
+| ---: | --- | --- |
+| 0-30 | Stable | No immediate risk signal based on the current rules |
+| 31-60 | Watch | Review is recommended |
 | 61+ | At Risk | Escalation or closer follow-up may be needed |
 
-The score is designed to support human review. It is not intended to automate decisions, rank employee performance, or replace management judgment.
+The weights and thresholds are illustrative. They would need to be calibrated to the operating context and available data before real-world use.
 
-See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed scoring notes.
+See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed model and intended-use guidance.
 
 ## Example Walkthrough
 
-The example below shows how the framework could evaluate a small set of operational items during a weekly review.
+The following example shows how three operational items could be evaluated during a weekly review.
 
 ### Sample Operational Input
 
@@ -121,78 +93,81 @@ The example below shows how the framework could evaluate a small set of operatio
 | OPS-1087 | Open | 50 | 60 | 8 | 8 |
 | OPS-1110 | In Progress | 20 | 20 | 1 | 0 |
 
-### Calculated Risk Output
+### Example Risk Output
 
 | Item ID | Risk Score | Flag | Explanation | Suggested Review |
 | --- | ---: | --- | --- | --- |
-| OPS-1042 | 61 | At Risk | High-priority item is significantly overdue, has multiple handoffs, and includes rework | Confirm current owner, identify blocker, and decide whether escalation is needed |
-| OPS-1087 | 37 | Watch | Item has moderate overdue, handoff, and rework signals | Monitor in the next weekly review and confirm ownership |
+| OPS-1042 | 61 | At Risk | Significantly overdue with elevated priority, multiple handoffs, and rework | Confirm ownership, identify the blocker, and determine whether escalation is needed |
+| OPS-1087 | 37 | Watch | Moderate overdue, handoff, and rework signals | Confirm ownership and monitor during the next review |
 | OPS-1110 | 12 | Stable | Current signals do not indicate immediate review risk | Continue normal tracking |
 
 ### Why OPS-1042 Was Flagged
 
-OPS-1042 was flagged because several operational signals are present at the same time. The item is overdue, high priority, has moved through multiple handoffs, and has a rework signal. Any one of those signals might be manageable on its own, but together they suggest a higher chance of delay, unclear accountability, or process friction.
+OPS-1042 crosses the at-risk threshold because several operational signals are present together. The item is significantly overdue, has elevated priority, has moved through multiple handoffs, and includes rework.
 
-The flag does not mean the item has failed. It means the item should be reviewed before it becomes a larger operational issue.
+The flag does not mean the item has failed, and it does not trigger an automatic action. It indicates that the item should receive human review before the underlying issue becomes more difficult to resolve.
 
 ## Repository Structure
 
 ```text
 .
-+-- analysis/      # Planned summaries, trend analysis, and threshold calibration notes
-+-- data/          # Raw and validated data organization concept
++-- analysis/      # Analysis scope, summaries, trends, and calibration concepts
++-- data/          # Raw and validated data organization
 +-- governance/    # Assumptions, limitations, exclusions, and failure modes
-+-- logic/         # Deterministic risk scoring model
-+-- reporting/     # Decision brief and reporting concepts
++-- logic/         # Deterministic risk-scoring model
++-- reporting/     # Review summaries and decision-brief concepts
 +-- README.md      # Public project overview
 ```
 
 ## Tech Stack
 
-This repository is currently documentation-first. The current files use:
+This is a documentation-first prototype. The repository currently uses:
 
-- Markdown
-- Mermaid diagrams
-- Deterministic scoring logic
-- Governance and reporting documentation
+- Markdown for project, governance, and reporting documentation
+- Mermaid for the process architecture
+- Deterministic business rules for risk scoring
+- Structured tables for example inputs and outputs
 
 ## Design Principles
 
 - Clarity over complexity
 - Explainable rules over black-box scoring
 - Human review before escalation
-- Traceability between inputs, rules, outputs, and limitations
-- Practical reporting for operations and leadership conversations
+- Traceability from input signals to output classifications
+- Explicit assumptions and limitations
+- Practical reporting for operational and leadership review
 
 ## Business Technology Relevance
 
-This project connects to business technology and operations roles because it demonstrates:
+The project demonstrates transferable skills across business technology, operations, analytics, risk, and process-improvement roles:
 
 - Operations analysis
 - Risk tracking
+- Business-rule documentation
 - Process improvement
+- Workflow visibility
 - Reporting and decision summaries
-- Business rules documentation
 - Data-driven escalation
 - Stakeholder communication
-- Workflow visibility
-- Governance-aware system thinking
+- Governance-aware system design
 
 ## What I Learned
 
-This project helped me practice translating an operations problem into a structured decision-support model. The main learning was that risk scoring is not only a technical exercise. It also requires clear assumptions, careful thresholds, explainable outputs, and an understanding of how people will use the results in review meetings.
+This project reinforced that operational risk scoring is not only a technical exercise. A useful framework also requires understandable assumptions, defensible rules, explainable outputs, and clear guidance on how results should and should not be used.
+
+It also demonstrated the value of translating operational activity into a concise review format that supports discussion without replacing human judgment.
 
 ## Future Improvements
 
-- Add a small sample dataset for demonstration
-- Create example risk summary outputs
-- Add spreadsheet or notebook-based scoring examples
-- Build a simple dashboard-style report
-- Add calibration notes showing how thresholds could be tuned over time
-- Document example escalation workflows
+- Add a small, non-sensitive sample dataset
+- Implement the scoring model in a spreadsheet or notebook
+- Produce reusable weekly risk-summary outputs
+- Add threshold-calibration examples
+- Create a simple dashboard-style reporting view
+- Document sample escalation and exception-review workflows
 
 ## Status
 
-Phase 1 prototype/framework. The repository currently documents the operating model, risk logic, reporting intent, and governance limitations.
+This repository represents a Phase 1, documentation-first prototype.
 
-This project is not deployed, production-ready, or connected to live operational systems. It is designed to support human review, not automated decisions.
+It is not deployed, production-ready, or connected to live operational systems. The scores and classifications are illustrative and are intended to support human review, not automatic decisions.
