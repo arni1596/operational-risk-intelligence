@@ -2,43 +2,27 @@
 
 An operational risk and decision-support framework that turns routine activity signals into explainable risk scores, flags, and review-ready summaries.
 
-The project shows how activity data from workflows, tickets, cases, and handoffs can be organized into a practical review framework for spotting early signs of operational risk.
+Operational teams generate signals every day through statuses, due dates, handoffs, priority levels, and rework. This framework shows how those scattered signals can be combined into a structured review process so emerging risk is easier to spot, explain, and discuss.
 
 ## Project Summary
 
-Operational teams generate activity data through tickets, cases, handoffs, status changes, due dates, and rework. The challenge is turning that activity into clear signals that help teams decide what needs review.
+The project defines a Phase 1 framework for reviewing operational work before small issues become larger delivery, quality, or ownership problems. It organizes common activity signals into a rule-based scoring model, assigns a review classification, and outlines how results can be summarized for leadership or operations review.
 
-This Phase 1 framework defines a rule-based approach to operational risk review. It connects workflow signals to clear classifications that can be reviewed and explained.
+The focus is practical decision support: making operational risk visible enough for teams to prioritize review, ask better questions, and document why an item needs attention.
 
 ## Problem It Solves
 
-Operational issues often develop gradually across disconnected workflows. A single overdue task may not be concerning, but an overdue, high-priority item with repeated handoffs and rework may deserve closer attention.
+Operational risk often builds gradually. An overdue item, a priority label, a handoff, or a rework event may not mean much on its own. When those signals appear together, they can point to process friction, unclear ownership, delivery delay, or quality risk.
 
-The framework is designed to help teams:
+Without a consistent review model, teams may rely on manual scanning, backlog totals, or status labels that do not show which items need closer attention.
 
-- Convert routine operational activity into consistent risk indicators
-- Focus review time on items with stronger warning signals
-- Show why an item was classified as stable, watch, or at risk
-- Support escalation and process-improvement conversations
-- Preserve traceability between inputs, rules, and outputs
+## How the Framework Helps
 
-## Why It Matters
-
-Operational risk can remain hidden when teams rely only on status labels, backlog totals, or manual review. Combining several activity signals provides a clearer view of potential process friction, unclear ownership, delivery delay, and quality risk.
-
-This project focuses on practical visibility rather than prediction. Its purpose is to make emerging risk easier to identify, communicate, and review before small problems grow into larger process issues.
-
-## What It Does
-
-The current framework documents:
-
-- Operational signals used for risk review
-- A documented risk-scoring model
-- Stable, watch, and at-risk thresholds
-- Explainable reasons for each classification
-- A reporting flow for review-ready summaries
-- Governance assumptions, limitations, and failure modes
-- Separation of raw and validated data
+- Converts routine operational activity into consistent risk indicators
+- Helps prioritize review around items with stronger warning signals
+- Shows why an item was classified as stable, watch, or at risk
+- Supports clearer escalation and process-improvement discussions
+- Maintains a connection between source signals, scoring rules, and outputs
 
 ## How It Works
 
@@ -52,14 +36,14 @@ flowchart LR
 ```
 
 1. Operational activity data is organized for review.
-2. Relevant signals are identified, including overdue days, priority, handoffs, and rework.
+2. Key signals are identified, including overdue days, priority, handoffs, and rework.
 3. Business rules convert those signals into a risk score.
 4. Thresholds classify each item as stable, watch, or at risk.
-5. The result is summarized with an explanation for review.
+5. Results are summarized for review and reporting.
 
 ## Risk Scoring Logic
 
-The documented scoring model is:
+The scoring model uses transparent business rules rather than predictive modeling. Each operational item is scored using overdue days, handoff count, priority weight, and rework count.
 
 ```text
 Risk Score =
@@ -77,13 +61,13 @@ The current review thresholds are:
 | 31-60 | Watch | Review is recommended |
 | 61+ | At Risk | Escalation or closer follow-up may be needed |
 
-The weights and thresholds are examples for Phase 1. They would need to be calibrated to the operating context and available data before real-world use.
+The weights and thresholds are Phase 1 examples and should be calibrated to the operating context and available data before real-world use.
 
 See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed model and intended-use guidance.
 
 ## Example Walkthrough
 
-The following example shows how three operational items could be evaluated during a weekly review.
+This example shows how routine operational signals move through the framework and become a review classification.
 
 ### Sample Operational Input
 
@@ -103,21 +87,27 @@ The following example shows how three operational items could be evaluated durin
 
 ### Why OPS-1042 Was Flagged
 
-OPS-1042 crosses the at-risk threshold because several operational signals are present together. The item is significantly overdue, has elevated priority, has moved through multiple handoffs, and includes rework.
-
-The flag does not mean the item has failed. It indicates that the item should receive review before the underlying issue becomes more difficult to resolve.
+OPS-1042 is classified as at risk because several warning signals are present at the same time. It is significantly overdue, carries elevated priority, has passed through multiple handoffs, and includes rework. That combination suggests the item may need ownership clarification, blocker review, or escalation before the issue becomes harder to recover.
 
 ## Repository Structure
 
 ```text
 .
-+-- analysis/      # Analysis scope, summaries, trends, and calibration concepts
-+-- data/          # Raw and validated data organization
++-- analysis/      # Analysis scope, review summaries, trend concepts, and calibration planning
++-- data/          # Raw and validated operational data organization
 +-- governance/    # Assumptions, limitations, exclusions, and failure modes
-+-- logic/         # Deterministic risk-scoring model
-+-- reporting/     # Review summaries and decision-brief concepts
++-- logic/         # Risk-scoring model and intended-use guidance
++-- reporting/     # Decision briefs and leadership review-summary concepts
 +-- README.md      # Public project overview
 ```
+
+Supporting documentation:
+
+- [analysis/README.md](analysis/README.md)
+- [data/README.md](data/README.md)
+- [governance/limitations.md](governance/limitations.md)
+- [logic/risk_scoring.md](logic/risk_scoring.md)
+- [reporting/README.md](reporting/README.md)
 
 ## Tech Stack
 
@@ -128,12 +118,12 @@ The flag does not mean the item has failed. It indicates that the item should re
 
 ## Design Approach
 
-The framework prioritizes explainable risk signals, traceable scoring logic, and human review. Each classification can be traced back to the operational signals and rules that produced it.
+The framework prioritizes transparent risk signals, traceable scoring logic, and human review. Each classification can be tied back to the operational signals and rules that produced it.
 
 ## Next Phase
 
-The next phase will implement the scoring model using sample operational data and expand the reporting layer with reusable risk summaries and a dashboard-style review view.
+The next phase will implement the scoring model using a small non-sensitive operational dataset, produce reusable risk-summary outputs, develop a simple dashboard-style review view, and explore threshold calibration using sample scenarios.
 
 ## Current Status
 
-The core risk framework, scoring logic, governance structure, and reporting flow are established for Phase 1. Development is continuing with implementation and reporting components planned for the next phase.
+The Phase 1 risk framework, scoring logic, governance structure, and reporting flow are established. Development is continuing with implementation and reporting components planned for the next phase.
