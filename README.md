@@ -1,6 +1,6 @@
 # Operational Risk & Decision Intelligence System
 
-An operational risk and decision-support framework that turns routine operational signals into explainable risk scores, flags, and review-ready summaries.
+An operational risk and decision-support framework that turns routine activity signals into explainable risk scores, flags, and review-ready summaries.
 
 The project shows how activity data from workflows, tickets, cases, and handoffs can be organized into a practical review framework for spotting early signs of operational risk.
 
@@ -8,7 +8,7 @@ The project shows how activity data from workflows, tickets, cases, and handoffs
 
 Operational teams generate activity data through tickets, cases, handoffs, status changes, due dates, and rework. The challenge is turning that activity into clear signals that help teams decide what needs review.
 
-This Phase 1 framework defines a rule-based approach to operational risk review. Each classification can be traced back to the signals and scoring logic that produced it.
+This Phase 1 framework defines a rule-based approach to operational risk review. It connects workflow signals to clear classifications that can be reviewed and explained.
 
 ## Problem It Solves
 
@@ -18,7 +18,7 @@ The framework is designed to help teams:
 
 - Convert routine operational activity into consistent risk indicators
 - Focus review time on items with stronger warning signals
-- Explain why an item was classified as stable, watch, or at risk
+- Show why an item was classified as stable, watch, or at risk
 - Support escalation and process-improvement conversations
 - Preserve traceability between inputs, rules, and outputs
 
@@ -38,7 +38,7 @@ The current framework documents:
 - Explainable reasons for each classification
 - A reporting flow for review-ready summaries
 - Governance assumptions, limitations, and failure modes
-- Separation of raw and validated data for traceability
+- Separation of raw and validated data
 
 ## How It Works
 
@@ -51,7 +51,7 @@ flowchart LR
     E --> F["Reporting Output"]
 ```
 
-1. Operational activity data is collected and organized.
+1. Operational activity data is organized for review.
 2. Relevant signals are identified, including overdue days, priority, handoffs, and rework.
 3. Business rules convert those signals into a risk score.
 4. Thresholds classify each item as stable, watch, or at risk.
@@ -122,7 +122,7 @@ The flag does not mean the item has failed. It indicates that the item should re
 ## Tech Stack
 
 - Markdown for project and governance documentation
-- Mermaid for the process architecture
+- Mermaid for process architecture
 - Deterministic business rules for risk scoring
 - Structured operational data and reporting examples
 
@@ -136,4 +136,4 @@ The next phase will implement the scoring model using sample operational data an
 
 ## Current Status
 
-The core risk framework, scoring logic, governance structure, and reporting flow are complete for Phase 1.
+The core risk framework, scoring logic, governance structure, and reporting flow are established for Phase 1. Development is continuing with implementation and reporting components planned for the next phase.
