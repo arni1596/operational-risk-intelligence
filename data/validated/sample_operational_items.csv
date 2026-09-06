@@ -1,0 +1,9 @@
+item_id,status,priority_weight,overdue_days,handoff_count,rework_count
+OPS-1042,In Review,50,120,8,6
+OPS-1087,Open,50,60,8,8
+OPS-1110,In Progress,20,20,1,0
+OPS-1168,Open,10,0,1,0
+OPS-1194,Blocked,70,85,6,5
+OPS-1215,Reopened,30,45,4,9
+OPS-1240,In Progress,80,0,2,1
+OPS-1288,In Review,40,75,7,3

@@ -18,6 +18,14 @@ The review model brings those signals together so operational risk can be evalua
 | Processing | Defined risk rules, weighted scoring, classification thresholds | Risk score and stable/watch/at-risk flag |
 | Review output | Explanation and suggested review action | Summary for operational or leadership review |
 
+Implemented now:
+
+- Python scoring engine in [logic/risk_score.py](logic/risk_score.py)
+- Synthetic validated sample data in [data/validated/sample_operational_items.csv](data/validated/sample_operational_items.csv)
+- Executable evaluation workflow in [analysis/evaluate_operational_risk.py](analysis/evaluate_operational_risk.py)
+- Generated review summary in [reporting/risk_review_summary.md](reporting/risk_review_summary.md)
+- Automated tests in [tests/test_risk_score.py](tests/test_risk_score.py)
+
 ## How It Works
 
 ```mermaid
@@ -59,6 +67,17 @@ The weights and thresholds are Phase 1 examples and should be calibrated to the 
 
 See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed scoring logic and intended-use guidance.
 
+## Run the Evaluation
+
+From the repository root:
+
+```powershell
+python -m unittest discover -s tests
+python analysis\evaluate_operational_risk.py
+```
+
+The analysis workflow reads the synthetic validated sample dataset, evaluates each operational item, prints the classification distribution, and writes [reporting/risk_review_summary.md](reporting/risk_review_summary.md).
+
 ## Example Walkthrough
 
 During a weekly operational review, three items are evaluated using the same activity signals and scoring rules.
@@ -83,6 +102,14 @@ During a weekly operational review, three items are evaluated using the same act
 
 OPS-1042 is classified as At Risk with a score of 61. The item is 120 days overdue, carries elevated priority, and has accumulated eight handoffs and six instances of rework. Together, those signals suggest an ownership or process issue that warrants review.
 
+The full sample run evaluates eight fictional operational items and produces this distribution:
+
+| Classification | Count |
+| --- | ---: |
+| At Risk | 1 |
+| Watch | 3 |
+| Stable | 4 |
+
 ## Repository Structure
 
 ```text
@@ -92,6 +119,7 @@ OPS-1042 is classified as At Risk with a score of 61. The item is 120 days overd
 +-- governance/    # Assumptions, limitations, exclusions, and failure modes
 +-- logic/         # Scoring formula, risk factors, thresholds, and intended-use guidance
 +-- reporting/     # Decision-brief and review-summary concepts
++-- tests/         # Automated tests for scoring and classification behavior
 +-- README.md      # Public project overview
 ```
 
@@ -109,4 +137,4 @@ The framework prioritizes transparent risk signals, traceable scoring logic, and
 
 ## Next Phase
 
-The next implementation step is to move the scoring model into an executable format using a small non-sensitive operational dataset, then generate repeatable review summaries and a simple reporting view. Threshold calibration can then be tested against sample scenarios.
+The next implementation step is to expand the reporting layer into a simple dashboard-style review view and test threshold calibration against additional sample scenarios.

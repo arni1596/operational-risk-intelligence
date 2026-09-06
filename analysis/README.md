@@ -1,10 +1,7 @@
 ﻿# Analysis Overview
 
-This directory contains exploratory and periodic analysis used to evaluate operational health and emerging risk.
+This directory contains the evaluation workflow used to turn validated operational items into scored review outputs.
 
-Planned artifacts include:
-- Weekly risk summaries
-- Trend analysis across backlog and handoffs
-- Retrospective calibration of risk thresholds
+[evaluate_operational_risk.py](evaluate_operational_risk.py) reads the validated sample dataset, evaluates each item with the scoring engine, summarizes classification counts, and writes a review summary to the reporting directory.
 
-Analysis outputs are designed to support review, not real-time monitoring.
+Planned analysis extensions include trend analysis across backlog and handoffs, plus retrospective calibration of risk thresholds.

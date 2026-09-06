@@ -35,6 +35,8 @@ Risk Score =
 
 Weights are illustrative and should be calibrated to the operating context before real-world use.
 
+The Phase 2 implementation in [risk_score.py](risk_score.py) applies this formula, assigns the documented classification, and returns structured reasons for each evaluated item.
+
 ## Compounding Condition
 
 Items that are both high priority and overdue should move across risk thresholds faster than items meeting only one condition.
