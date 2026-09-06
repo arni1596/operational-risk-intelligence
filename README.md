@@ -40,7 +40,7 @@ graph LR;
 1. Operational activity data is organized for review.
 2. Overdue days, priority, handoffs, and rework are identified as review signals.
 3. Business rules convert those signals into a weighted risk score.
-4. Thresholds classify each item as stable, watch, or at risk.
+4. The review score is rounded consistently and thresholds classify each item as stable, watch, or at risk.
 5. Results are summarized for reporting and follow-up discussion.
 
 ## Risk Scoring Logic
@@ -63,6 +63,8 @@ The current review thresholds are:
 | 31-60 | Watch | Review is recommended |
 | 61+ | At Risk | Escalation or closer follow-up may be needed |
 
+Review outputs use whole-number scores with conventional half-up rounding. The exact weighted calculation remains available in the scoring engine for audit and regression testing.
+
 The weights and thresholds are Phase 1 examples and should be calibrated to the operating context and available data before real-world use.
 
 See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed scoring logic and intended-use guidance.
@@ -71,9 +73,9 @@ See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed scoring logi
 
 From the repository root:
 
-```powershell
+```text
 python -m unittest discover -s tests
-python analysis\evaluate_operational_risk.py
+python analysis/evaluate_operational_risk.py
 ```
 
 The analysis workflow reads the synthetic validated sample dataset, evaluates each operational item, prints the classification distribution, and writes [reporting/risk_review_summary.md](reporting/risk_review_summary.md).

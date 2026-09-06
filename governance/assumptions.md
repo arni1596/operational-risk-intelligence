@@ -10,6 +10,7 @@
 ## Scoring Assumptions
 
 - The documented weights in [../logic/risk_scoring.md](../logic/risk_scoring.md) are the source of truth for Phase 2 scoring.
-- Scores are reported as whole numbers in review outputs for readability.
+- Review outputs use whole-number scores for readability. Exact weighted scores remain available for audit and regression testing.
+- Whole-number review scores use conventional half-up rounding before the documented classification thresholds are applied.
 - Thresholds are stable for the current sample workflow and should be recalibrated before use in a real operating context.
 - Additional rules, such as compounding conditions, should be added only when the business logic is explicitly defined.

@@ -8,6 +8,7 @@ instead of predictive modeling so the same inputs reproduce the same output.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from decimal import Decimal, ROUND_HALF_UP
 from typing import Any, Mapping
 
 
@@ -46,7 +47,7 @@ class OperationalItem:
             "rework_count",
         ):
             value = getattr(self, field_name)
-            if not isinstance(value, int):
+            if isinstance(value, bool) or not isinstance(value, int):
                 raise TypeError(f"{field_name} must be an integer")
             if value < 0:
                 raise ValueError(f"{field_name} cannot be negative")
@@ -85,6 +86,9 @@ class RiskEvaluation:
 
 
 def _to_int(value: Any, field_name: str) -> int:
+    if isinstance(value, bool):
+        raise ValueError(f"{field_name} must be an integer")
+
     try:
         if isinstance(value, str):
             value = value.strip()
@@ -105,13 +109,22 @@ def calculate_score(item: OperationalItem) -> float:
 
 
 def reported_score(item: OperationalItem) -> float:
-    """Return the whole-number score used in review tables."""
+    """Return the whole-number score used for review classification.
 
-    return float(round(calculate_score(item)))
+    Review outputs intentionally use conventional half-up rounding rather than
+    Python's default ties-to-even behavior. The unrounded weighted score remains
+    available through ``calculate_score`` for audit and regression testing.
+    """
+
+    exact_score = sum(
+        Decimal(getattr(item, signal)) * Decimal(str(weight))
+        for signal, weight in WEIGHTS.items()
+    )
+    return float(exact_score.quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
 
 def classify_score(score: float) -> str:
-    """Classify a risk score using the documented thresholds."""
+    """Classify a reported risk score using the documented thresholds."""
 
     if score <= STABLE_MAX:
         return "Stable"

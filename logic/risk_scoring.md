@@ -37,6 +37,8 @@ Weights are illustrative and should be calibrated to the operating context befor
 
 The Phase 2 implementation in [risk_score.py](risk_score.py) applies this formula, assigns the documented classification, and returns structured reasons for each evaluated item.
 
+For review outputs, the exact weighted score is rounded to the nearest whole number using conventional half-up rounding before the classification thresholds are applied. The unrounded weighted score remains available in code for audit and regression testing.
+
 ## Compounding Condition
 
 Items that are both high priority and overdue should move across risk thresholds faster than items meeting only one condition.

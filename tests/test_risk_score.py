@@ -5,6 +5,7 @@ from logic.risk_score import (
     calculate_score,
     classify_score,
     evaluate_item,
+    reported_score,
 )
 
 
@@ -61,12 +62,37 @@ class RiskScoreTests(unittest.TestCase):
         self.assertEqual(classify_score(60), "Watch")
         self.assertEqual(classify_score(61), "At Risk")
 
+    def test_half_point_reporting_rounds_up_before_classification(self) -> None:
+        item = OperationalItem(
+            item_id="OPS-EDGE",
+            status="Open",
+            overdue_days=76,
+            handoff_count=0,
+            priority_weight=0,
+            rework_count=1,
+        )
+
+        self.assertAlmostEqual(calculate_score(item), 30.5)
+        self.assertEqual(reported_score(item), 31.0)
+        self.assertEqual(evaluate_item(item).classification, "Watch")
+
     def test_invalid_negative_values(self) -> None:
         with self.assertRaises(ValueError):
             OperationalItem(
                 item_id="OPS-2001",
                 status="Open",
                 overdue_days=-1,
+                handoff_count=0,
+                priority_weight=10,
+                rework_count=0,
+            )
+
+    def test_boolean_signal_is_rejected(self) -> None:
+        with self.assertRaises(TypeError):
+            OperationalItem(
+                item_id="OPS-BOOL",
+                status="Open",
+                overdue_days=True,
                 handoff_count=0,
                 priority_weight=10,
                 rework_count=0,
