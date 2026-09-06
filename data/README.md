@@ -1,14 +1,14 @@
-# Data Overview
+﻿# Data Overview
 
-This directory separates operational data by processing stage.
+This directory contains operational data used by the system.
 
-- `raw/`: source data as received, unchanged
-- `validated/`: cleaned and normalized data used for analysis
+- raw: source data as received, unchanged
+- validated: cleaned and normalized data used for analysis
 
 Data separation is intentional to preserve traceability and auditability.
 
-## Synthetic Demonstration Data
+## Current Sample Data
 
-`validated/sample_operational_items.csv` is a fictional dataset created only to demonstrate the scoring and review workflow. It does not contain employer, customer, Salesforce, or other real operational data.
+[validated/sample_operational_items.csv](validated/sample_operational_items.csv) contains fictional sample records used to exercise the scoring model. The sample includes stable items, overdue work, elevated priority, repeated handoffs, rework, and combined risk factors.
 
-The sample includes Stable, Watch, and At Risk cases so the deterministic rules can be exercised consistently in tests and demonstrations.
+The sample data does not represent a real employer, customer, Salesforce environment, or confidential operational system.

@@ -1,68 +1,51 @@
 # Operational Risk & Decision Intelligence System
 
-An operational risk and decision-support system that turns routine activity signals into explainable risk scores, flags, and review-ready summaries.
+An operational risk and decision-support framework that turns routine activity signals into explainable risk scores, flags, and review-ready summaries.
 
-The project shows how activity data from workflows, tickets, cases, and handoffs can be organized into a practical review framework for spotting early signs of operational risk.
+Operational teams already generate signals through overdue work, priority levels, repeated handoffs, and rework. Those signals are often reviewed separately, making patterns of emerging risk harder to identify before they affect delivery, quality, or ownership.
 
-## Project Summary
+## Operational Problem
 
-Operational teams generate activity data through tickets, cases, handoffs, status changes, due dates, and rework. The challenge is turning that activity into clear signals that help teams decide what needs review.
+Status labels and backlog counts rarely tell the full story. A single overdue item may be manageable, but an overdue high-priority item with multiple handoffs and rework can point to a deeper process issue.
 
-The project now includes an executable Phase 2 prototype built on the original Phase 1 framework. It applies deterministic business rules to validated operational inputs, preserves the weighted contribution of each signal, and produces structured outputs for human review.
+The review model brings those signals together so operational risk can be evaluated consistently and discussed with clear supporting context.
 
-## Problem It Solves
+## Review Framework
 
-Operational issues often develop gradually across disconnected workflows. A single overdue task may not be concerning, but an overdue, high-priority item with repeated handoffs and rework may deserve closer attention.
+| Layer | Includes | Output |
+| --- | --- | --- |
+| Inputs | Overdue days, priority weight, handoff count, rework count | Structured operational signals |
+| Processing | Defined risk rules, weighted scoring, classification thresholds | Risk score and stable/watch/at-risk flag |
+| Review output | Explanation and suggested review action | Summary for operational or leadership review |
 
-The system is designed to help teams:
+Implemented now:
 
-- Convert routine operational activity into consistent risk indicators
-- Focus review time on items with stronger warning signals
-- Show why an item was classified as stable, watch, or at risk
-- Support escalation and process-improvement conversations
-- Preserve traceability between inputs, rules, and outputs
-
-## Why It Matters
-
-Operational risk can remain hidden when teams rely only on status labels, backlog totals, or manual review. Combining several activity signals provides a clearer view of potential process friction, unclear ownership, delivery delay, and quality risk.
-
-This project focuses on practical visibility rather than prediction. Its purpose is to make emerging risk easier to identify, communicate, and review before small problems grow into larger process issues.
-
-## What It Does
-
-The current prototype provides:
-
-- A documented and executable deterministic risk-scoring model
-- Stable, watch, and at-risk classifications
-- Weighted contribution details for every scored signal
-- Human-readable explanations derived directly from the scoring inputs
-- A validated synthetic sample dataset for repeatable demonstrations
-- A review pipeline that ranks higher-risk items and summarizes classification counts
-- Automated regression tests for calculations, thresholds, validation, and determinism
-- Governance assumptions, limitations, and intended-use guidance
-- Separation of raw and validated data
+- Python scoring engine in [logic/risk_score.py](logic/risk_score.py)
+- Synthetic validated sample data in [data/validated/sample_operational_items.csv](data/validated/sample_operational_items.csv)
+- Executable evaluation workflow in [analysis/evaluate_operational_risk.py](analysis/evaluate_operational_risk.py)
+- Generated review summary in [reporting/risk_review_summary.md](reporting/risk_review_summary.md)
+- Automated tests in [tests/test_risk_score.py](tests/test_risk_score.py)
 
 ## How It Works
 
 ```mermaid
-flowchart LR
-    A["Operational Activity Data"] --> B["Validated Inputs"]
-    B --> C["Deterministic Risk Rules"]
-    C --> D["Risk Score and Classification"]
-    D --> E["Contribution Explanation"]
-    E --> F["Review-Ready Output"]
+graph LR;
+    A[Operational Activity Data] --> B[Signal Detection];
+    B --> C[Risk Rules];
+    C --> D[Risk Score and Flag];
+    D --> E[Decision Summary];
+    E --> F[Reporting Output];
 ```
 
-1. Operational activity data is organized and validated for review.
-2. Relevant signals are read, including overdue days, priority, handoffs, and rework.
-3. Deterministic business rules convert those signals into a risk score.
-4. Thresholds classify each item as stable, watch, or at risk.
-5. Weighted contributions preserve an explanation trail for every score.
-6. The analysis workflow summarizes classifications and ranks review candidates.
+1. Operational activity data is organized for review.
+2. Overdue days, priority, handoffs, and rework are identified as review signals.
+3. Business rules convert those signals into a weighted risk score.
+4. The review score is rounded consistently and thresholds classify each item as stable, watch, or at risk.
+5. Results are summarized for reporting and follow-up discussion.
 
 ## Risk Scoring Logic
 
-The documented scoring model is:
+Each item is scored using the same weighted formula:
 
 ```text
 Risk Score =
@@ -80,13 +63,26 @@ The current review thresholds are:
 | 31-60 | Watch | Review is recommended |
 | 61+ | At Risk | Escalation or closer follow-up may be needed |
 
-The weights and thresholds remain illustrative. They would need to be calibrated to the operating context and available data before real-world use.
+Review outputs use whole-number scores with conventional half-up rounding. The exact weighted calculation remains available in the scoring engine for audit and regression testing.
 
-See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed model and intended-use guidance. The executable implementation is in [logic/risk_score.py](logic/risk_score.py).
+The weights and thresholds are Phase 1 examples and should be calibrated to the operating context and available data before real-world use.
+
+See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed scoring logic and intended-use guidance.
+
+## Run the Evaluation
+
+From the repository root:
+
+```text
+python -m unittest discover -s tests
+python analysis/evaluate_operational_risk.py
+```
+
+The analysis workflow reads the synthetic validated sample dataset, evaluates each operational item, prints the classification distribution, and writes [reporting/risk_review_summary.md](reporting/risk_review_summary.md).
 
 ## Example Walkthrough
 
-The following example shows how three fictional operational items are evaluated during a review.
+During a weekly operational review, three items are evaluated using the same activity signals and scoring rules.
 
 ### Sample Operational Input
 
@@ -98,94 +94,49 @@ The following example shows how three fictional operational items are evaluated 
 
 ### Example Risk Output
 
-| Item ID | Risk Score | Flag | Suggested Review |
-| --- | ---: | --- | --- |
-| OPS-1042 | 61.0 | At Risk | Confirm ownership, identify the blocker, and determine whether escalation is needed |
-| OPS-1087 | 37.2 | Watch | Confirm ownership and monitor during the next review |
-| OPS-1110 | 12.3 | Stable | Continue normal tracking |
+| Item ID | Risk Score | Flag | Explanation | Suggested Review |
+| --- | ---: | --- | --- | --- |
+| OPS-1042 | 61 | At Risk | Significantly overdue with elevated priority, multiple handoffs, and rework | Confirm ownership, identify the blocker, and determine whether escalation is needed |
+| OPS-1087 | 37 | Watch | Moderate overdue, handoff, and rework signals | Confirm ownership and monitor during the next review |
+| OPS-1110 | 12 | Stable | Current signals do not indicate immediate review risk | Continue normal tracking |
 
-### Why OPS-1042 Was Flagged
+### OPS-1042 Review Note
 
-OPS-1042 crosses the at-risk threshold because its weighted signals total 61.0 points:
+OPS-1042 is classified as At Risk with a score of 61. The item is 120 days overdue, carries elevated priority, and has accumulated eight handoffs and six instances of rework. Together, those signals suggest an ownership or process issue that warrants review.
 
-- Overdue days: 48.0
-- Ownership handoffs: 2.4
-- Priority weight: 10.0
-- Rework: 0.6
+The full sample run evaluates eight fictional operational items and produces this distribution:
 
-The flag does not mean the item has failed. It indicates that the item should receive review. The implementation preserves these signal contributions so a reviewer can trace the classification back to its inputs.
-
-## Run the Phase 2 Prototype
-
-The prototype uses only the Python standard library.
-
-From the repository root:
-
-```bash
-python -m analysis.run_risk_review
-```
-
-To return only the top three review candidates:
-
-```bash
-python -m analysis.run_risk_review --top 3
-```
-
-To write the structured review output to JSON:
-
-```bash
-python -m analysis.run_risk_review --output reporting/risk_review.json
-```
-
-Run the automated tests with:
-
-```bash
-python -m unittest discover -s tests -v
-```
+| Classification | Count |
+| --- | ---: |
+| At Risk | 1 |
+| Watch | 3 |
+| Stable | 4 |
 
 ## Repository Structure
 
 ```text
 .
-+-- analysis/
-|   +-- run_risk_review.py               # Executable evaluation and review-summary workflow
-+-- data/
-|   +-- validated/
-|       +-- sample_operational_items.csv # Synthetic validated demonstration data
-+-- governance/                          # Assumptions, limitations, exclusions, and failure modes
-+-- logic/
-|   +-- risk_scoring.md                  # Documented scoring model and intended use
-|   +-- risk_score.py                    # Deterministic scoring and explanation engine
-+-- reporting/                           # Review-summary and decision-brief concepts
-+-- tests/
-|   +-- test_risk_score.py               # Regression and boundary tests
-+-- README.md
++-- analysis/      # Review summaries, trend concepts, and threshold-calibration planning
++-- data/          # Raw and validated operational data organization
++-- governance/    # Assumptions, limitations, exclusions, and failure modes
++-- logic/         # Scoring formula, risk factors, thresholds, and intended-use guidance
++-- reporting/     # Decision-brief and review-summary concepts
++-- tests/         # Automated tests for scoring and classification behavior
++-- README.md      # Public project overview
 ```
 
-## Tech Stack
+Supporting documentation:
 
-- Python 3 standard library
-- CSV for validated sample inputs
-- JSON for structured review output
-- `unittest` for automated decision-logic tests
-- Mermaid for process architecture
-- Markdown for project and governance documentation
-- Deterministic business rules for risk scoring
+- [analysis/README.md](analysis/README.md)
+- [data/README.md](data/README.md)
+- [governance/limitations.md](governance/limitations.md)
+- [logic/risk_scoring.md](logic/risk_scoring.md)
+- [reporting/README.md](reporting/README.md)
 
 ## Design Approach
 
-The system prioritizes explainable risk signals, traceable scoring logic, reproducibility, and human review. Each classification can be traced back to the operational signals and weighted contributions that produced it.
-
-The implementation intentionally avoids predictive modeling, automated enforcement, and unsupported business rules. Concepts that are not mathematically specified in the Phase 1 documentation are not silently invented in code.
-
-## Data and Privacy
-
-The included sample dataset is synthetic and fictional. It is provided only to demonstrate the scoring and review workflow and does not represent data from an employer, customer, Salesforce environment, or other real operational system.
+The framework prioritizes transparent risk signals, traceable scoring logic, and human review. Each classification can be tied back to the operational signals and rules that produced it.
 
 ## Next Phase
 
-The next phase can expand the reporting layer with reusable decision briefs and a dashboard-style review view, then introduce explicit calibration experiments for weights and thresholds without changing the current model silently.
-
-## Current Status
-
-Phase 2 now includes an executable deterministic scoring engine, validated synthetic sample data, a review-summary workflow, weighted explanation trails, and automated tests. The system remains a prototype intended for decision support and portfolio demonstration rather than production deployment.
+The next implementation step is to expand the reporting layer into a simple dashboard-style review view and test threshold calibration against additional sample scenarios.
