@@ -16,3 +16,21 @@ The repository already had strong local regression coverage, but validation depe
 
 ### Next
 Consider adding threshold-calibration scenario analysis as a separate feature PR. Keep that work independent from CI so the validation infrastructure remains small and reusable.
+
+## 2026-09-13 - Threshold Sensitivity Analysis
+
+### What changed
+- Added a threshold sensitivity analysis workflow with Current, Earlier Review, and Later Review scenarios.
+- Generated a reproducible summary showing classification counts and item-level classification changes.
+- Added focused tests for scenario definitions, score invariance, deterministic output, and report rendering.
+
+### Why
+The scoring pipeline can now show how review volume changes when thresholds move slightly earlier or later, without changing the default scoring model or recommending production threshold changes.
+
+### Verification
+- `python -m unittest discover -s tests`
+- `python analysis/evaluate_operational_risk.py`
+- `python analysis/analyze_threshold_sensitivity.py`
+
+### Next
+Add a dashboard-style operational review view that consumes existing generated analysis outputs.
