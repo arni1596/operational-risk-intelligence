@@ -9,4 +9,6 @@ Primary artifacts include:
 
 [risk_review_summary.md](risk_review_summary.md) is generated from the synthetic validated sample dataset and shows classification distribution, top review candidates, and reasons surfaced for flagged items.
 
+[threshold_sensitivity_summary.md](threshold_sensitivity_summary.md) is generated from threshold sensitivity analysis and shows how illustrative threshold shifts affect classification volume and item-level movement.
+
 Reports prioritize clarity and actionability over visual complexity.
