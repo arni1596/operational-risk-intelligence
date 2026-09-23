@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Mapping
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -36,6 +37,48 @@ def _review_volume(counts: dict[str, int]) -> int:
     return _count_value(counts, "Watch") + _count_value(counts, "At Risk")
 
 
+def _percentage(count: int, total: int) -> str:
+    if total == 0:
+        return "0.0%"
+    return f"{(count / total) * 100:.1f}%"
+
+
+def _movement_summary(result: ThresholdScenarioResult) -> str:
+    changes = result.changes
+    if not changes:
+        return f"- {result.scenario.name}: no records changed classification."
+    if len(changes) == 1:
+        change = changes[0]
+        return (
+            f"- {result.scenario.name}: {change.item_id} moves "
+            f"{change.current_classification} -> {change.scenario_classification}."
+        )
+
+    joined_changes = ", ".join(
+        f"{change.item_id} ({change.change})" for change in changes
+    )
+    return (
+        f"- {result.scenario.name}: {len(changes)} records changed classification: "
+        f"{joined_changes}."
+    )
+
+
+def _signal_totals(review_queue: list[RiskEvaluation]) -> Mapping[str, int]:
+    overdue_values = [result.signals["overdue_days"] for result in review_queue]
+    handoff_values = [result.signals["handoff_count"] for result in review_queue]
+    rework_values = [result.signals["rework_count"] for result in review_queue]
+
+    return {
+        "overdue_items": sum(1 for value in overdue_values if value > 0),
+        "total_overdue_days": sum(overdue_values),
+        "total_handoffs": sum(handoff_values),
+        "total_rework": sum(rework_values),
+        "max_overdue_days": max(overdue_values, default=0),
+        "max_handoff_count": max(handoff_values, default=0),
+        "max_rework_count": max(rework_values, default=0),
+    }
+
+
 def render_dashboard(
     risk_results: list[RiskEvaluation],
     sensitivity_results: list[ThresholdScenarioResult],
@@ -43,10 +86,9 @@ def render_dashboard(
     """Render a consolidated markdown dashboard for operational review."""
 
     counts = classification_counts(risk_results)
-    top_items = top_review_candidates(risk_results, limit=5)
-    sensitivity_by_name = {
-        result.scenario.name: result for result in sensitivity_results
-    }
+    review_queue = top_review_candidates(risk_results, limit=len(risk_results))
+    signal_totals = _signal_totals(review_queue)
+    total_items = len(risk_results)
     current_review_volume = _review_volume(counts)
 
     lines = [
@@ -54,32 +96,63 @@ def render_dashboard(
         "",
         "Generated from the fictional sample dataset in `data/validated/sample_operational_items.csv` using the existing scoring and threshold sensitivity workflows.",
         "",
-        "## Current Risk Snapshot",
+        "## Current Portfolio Snapshot",
         "",
-        "| Classification | Count |",
-        "| --- | ---: |",
+        "| Metric | Count | Share |",
+        "| --- | ---: | ---: |",
+        f"| Total Items | {total_items} | {_percentage(total_items, total_items)} |",
+        f"| Stable | {_count_value(counts, 'Stable')} | {_percentage(_count_value(counts, 'Stable'), total_items)} |",
+        f"| Watch | {_count_value(counts, 'Watch')} | {_percentage(_count_value(counts, 'Watch'), total_items)} |",
+        f"| At Risk | {_count_value(counts, 'At Risk')} | {_percentage(_count_value(counts, 'At Risk'), total_items)} |",
+        f"| Review Queue | {current_review_volume} | {_percentage(current_review_volume, total_items)} |",
     ]
-
-    for classification in ("At Risk", "Watch", "Stable"):
-        lines.append(f"| {classification} | {_count_value(counts, classification)} |")
 
     lines.extend(
         [
             "",
-            f"Current review volume: {current_review_volume} item(s) classified as Watch or At Risk.",
-            "",
             "## Priority Review Queue",
             "",
-            "| Item ID | Status | Review Score | Exact Score | Flag | Primary Reason | Suggested Review |",
-            "| --- | --- | ---: | ---: | --- | --- | --- |",
+            "| Rank | Item ID | Status | Review Score | Exact Score | Classification | Overdue Days | Handoffs | Rework | Suggested Review |",
+            "| ---: | --- | --- | ---: | ---: | --- | ---: | ---: | ---: | --- |",
         ]
     )
 
-    for result in top_items:
+    for rank, result in enumerate(review_queue, start=1):
         lines.append(
-            f"| {result.item_id} | {result.status} | {result.review_score} | "
-            f"{result.exact_score} | {result.classification} | "
-            f"{_primary_reason(result)} | {result.suggested_review} |"
+            f"| {rank} | {result.item_id} | {result.status} | "
+            f"{result.review_score} | {result.exact_score} | "
+            f"{result.classification} | {result.signals['overdue_days']} | "
+            f"{result.signals['handoff_count']} | {result.signals['rework_count']} | "
+            f"{result.suggested_review} |"
+        )
+
+    lines.extend(
+        [
+            "",
+            "## Signal Snapshot",
+            "",
+            "The current review queue includes only items classified as Watch or At Risk.",
+            "",
+            "| Signal | Value |",
+            "| --- | ---: |",
+            f"| Review queue items with overdue days | {signal_totals['overdue_items']} |",
+            f"| Total overdue days across review queue | {signal_totals['total_overdue_days']} |",
+            f"| Total handoffs across review queue | {signal_totals['total_handoffs']} |",
+            f"| Total rework across review queue | {signal_totals['total_rework']} |",
+            f"| Highest overdue-days value | {signal_totals['max_overdue_days']} |",
+            f"| Highest handoff count | {signal_totals['max_handoff_count']} |",
+            f"| Highest rework count | {signal_totals['max_rework_count']} |",
+            "",
+            "| Item ID | Overdue Days | Handoffs | Rework | Primary Reason |",
+            "| --- | ---: | ---: | ---: | --- |",
+        ]
+    )
+
+    for result in review_queue:
+        lines.append(
+            f"| {result.item_id} | {result.signals['overdue_days']} | "
+            f"{result.signals['handoff_count']} | {result.signals['rework_count']} | "
+            f"{_primary_reason(result)} |"
         )
 
     lines.extend(
@@ -126,19 +199,29 @@ def render_dashboard(
     if movement_rows == 0:
         lines.append("| No scenario | No item | 0 | No change | No change | No movement |")
 
-    at_risk_count = _count_value(counts, "At Risk")
-    earlier_review_volume = _review_volume(sensitivity_by_name["Earlier Review"].counts)
-    later_review_volume = _review_volume(sensitivity_by_name["Later Review"].counts)
+    lines.extend(
+        [
+            "",
+            "Scenario movement summary:",
+            "",
+        ]
+    )
+
+    for result in sensitivity_results:
+        if result.scenario.name == "Current":
+            continue
+        lines.append(_movement_summary(result))
 
     lines.extend(
         [
             "",
-            "## Review Focus",
+            "## Review Notes",
             "",
-            f"- {at_risk_count} item(s) currently meet the At Risk threshold.",
-            f"- The Earlier Review scenario moves review volume from {current_review_volume} to {earlier_review_volume} item(s).",
-            f"- The Later Review scenario keeps review volume at {later_review_volume} item(s), but changes the classification for OPS-1042.",
-            "- Scenario results are for threshold sensitivity review only; they do not change the default scoring configuration.",
+            "- Scoring is deterministic and follows the documented weighted rule set.",
+            "- Threshold values are illustrative and should not be treated as production calibration.",
+            "- Source data is fictional and intended for prototype review.",
+            "- The dashboard supports prioritization and discussion; human operational judgment is still required.",
+            "- Sensitivity scenarios are not recommendations and do not change the default scoring configuration.",
         ]
     )
 
@@ -169,7 +252,7 @@ def main() -> None:
     counts = classification_counts(risk_results)
     print("Operational review dashboard complete.")
     print(
-        "Current risk snapshot: "
+        "Current portfolio snapshot: "
         f"At Risk={_count_value(counts, 'At Risk')}, "
         f"Watch={_count_value(counts, 'Watch')}, "
         f"Stable={_count_value(counts, 'Stable')}"

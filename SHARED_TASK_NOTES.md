@@ -38,8 +38,8 @@ Add a dashboard-style operational review view that consumes existing generated a
 ## 2026-09-23 - Operational Review Dashboard
 
 ### What changed
-- Added a generated markdown dashboard that consolidates current risk results and threshold sensitivity results.
-- Added tests for deterministic dashboard rendering, current distribution, review queue content, and classification movements.
+- Added a generated markdown dashboard that consolidates current risk results, review queue signal totals, and threshold sensitivity results.
+- Added tests for deterministic dashboard rendering, portfolio distribution, review queue membership and ordering, signal totals, and classification movements.
 - Extended CI to run the threshold sensitivity and dashboard generation workflows.
 - Updated analysis, reporting, and root documentation to reference the dashboard workflow.
 
