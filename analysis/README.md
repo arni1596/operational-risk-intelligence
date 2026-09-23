@@ -6,4 +6,6 @@ This directory contains the evaluation workflow used to turn validated operation
 
 [analyze_threshold_sensitivity.py](analyze_threshold_sensitivity.py) compares the current thresholds with illustrative earlier/later review scenarios while keeping the scoring model unchanged.
 
-Planned analysis extensions include trend analysis across backlog and handoffs, plus dashboard-style review outputs.
+[build_operational_review_dashboard.py](build_operational_review_dashboard.py) combines the current risk review and threshold sensitivity outputs into a dashboard-style markdown report for operational review.
+
+Planned analysis extensions include trend analysis across backlog and handoffs, plus machine-readable exports for generated outputs.

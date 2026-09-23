@@ -34,3 +34,23 @@ The scoring pipeline can now show how review volume changes when thresholds move
 
 ### Next
 Add a dashboard-style operational review view that consumes existing generated analysis outputs.
+
+## 2026-09-23 - Operational Review Dashboard
+
+### What changed
+- Added a generated markdown dashboard that consolidates current risk results and threshold sensitivity results.
+- Added tests for deterministic dashboard rendering, current distribution, review queue content, and classification movements.
+- Extended CI to run the threshold sensitivity and dashboard generation workflows.
+- Updated analysis, reporting, and root documentation to reference the dashboard workflow.
+
+### Why
+The repository now has separate generated outputs for current risk review and threshold sensitivity. A consolidated dashboard gives reviewers one place to see current review volume, priority candidates, and the practical effect of threshold scenarios without changing the scoring engine.
+
+### Verification
+- `python -m unittest discover -s tests`
+- `python analysis/evaluate_operational_risk.py`
+- `python analysis/analyze_threshold_sensitivity.py`
+- `python analysis/build_operational_review_dashboard.py`
+
+### Next
+Add machine-readable CSV or JSON exports for generated analysis outputs.
