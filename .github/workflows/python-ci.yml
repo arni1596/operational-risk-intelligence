@@ -35,3 +35,9 @@ jobs:
 
       - name: Run sample operational risk pipeline
         run: python analysis/evaluate_operational_risk.py
+
+      - name: Run threshold sensitivity analysis
+        run: python analysis/analyze_threshold_sensitivity.py
+
+      - name: Build operational review dashboard
+        run: python analysis/build_operational_review_dashboard.py

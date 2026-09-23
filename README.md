@@ -23,7 +23,10 @@ Implemented now:
 - Python scoring engine in [logic/risk_score.py](logic/risk_score.py)
 - Synthetic validated sample data in [data/validated/sample_operational_items.csv](data/validated/sample_operational_items.csv)
 - Executable evaluation workflow in [analysis/evaluate_operational_risk.py](analysis/evaluate_operational_risk.py)
+- Threshold sensitivity workflow in [analysis/analyze_threshold_sensitivity.py](analysis/analyze_threshold_sensitivity.py)
+- Dashboard-style review report in [analysis/build_operational_review_dashboard.py](analysis/build_operational_review_dashboard.py)
 - Generated review summary in [reporting/risk_review_summary.md](reporting/risk_review_summary.md)
+- Generated operational review dashboard in [reporting/operational_review_dashboard.md](reporting/operational_review_dashboard.md)
 - Automated tests in [tests/test_risk_score.py](tests/test_risk_score.py)
 
 ## How It Works
@@ -76,9 +79,11 @@ From the repository root:
 ```text
 python -m unittest discover -s tests
 python analysis/evaluate_operational_risk.py
+python analysis/analyze_threshold_sensitivity.py
+python analysis/build_operational_review_dashboard.py
 ```
 
-The analysis workflow reads the synthetic validated sample dataset, evaluates each operational item, prints the classification distribution, and writes [reporting/risk_review_summary.md](reporting/risk_review_summary.md).
+The analysis workflows read the synthetic validated sample dataset, evaluate each operational item, test illustrative threshold scenarios, and write review outputs in the reporting directory.
 
 ## Example Walkthrough
 
@@ -139,4 +144,4 @@ The framework prioritizes transparent risk signals, traceable scoring logic, and
 
 ## Next Phase
 
-The next implementation step is to expand the reporting layer into a simple dashboard-style review view and test threshold calibration against additional sample scenarios.
+The next implementation step is to add machine-readable CSV or JSON exports for generated analysis outputs so the reporting layer can support additional review views.
