@@ -2,7 +2,7 @@
 
 An operational risk and decision-support framework that turns routine activity signals into explainable risk scores, flags, and review-ready summaries.
 
-Operational teams already generate signals through overdue work, priority levels, repeated handoffs, and rework. Those signals are often reviewed separately, making patterns of emerging risk harder to identify before they affect delivery, quality, or ownership.
+Operational teams already generate signals through overdue work, priority levels, repeated handoffs, and rework. Those signals are often reviewed separately, making operational risk harder to discuss with consistent supporting context.
 
 ## Operational Problem
 
@@ -27,7 +27,7 @@ Implemented now:
 - Dashboard-style review report in [analysis/build_operational_review_dashboard.py](analysis/build_operational_review_dashboard.py)
 - Generated review summary in [reporting/risk_review_summary.md](reporting/risk_review_summary.md)
 - Generated operational review dashboard in [reporting/operational_review_dashboard.md](reporting/operational_review_dashboard.md)
-- Automated tests in [tests/test_risk_score.py](tests/test_risk_score.py)
+- Automated regression tests in [tests/](tests/) for scoring, validation, threshold sensitivity, dashboard behavior, and generated-report consistency
 
 ## How It Works
 
@@ -68,7 +68,7 @@ The current review thresholds are:
 
 Review outputs use whole-number scores with conventional half-up rounding. The exact weighted calculation remains available in the scoring engine for audit and regression testing.
 
-The weights and thresholds are Phase 1 examples and should be calibrated to the operating context and available data before real-world use.
+The weights and thresholds are illustrative examples and should be reviewed against the operating context and available data before real-world use.
 
 See [logic/risk_scoring.md](logic/risk_scoring.md) for the detailed scoring logic and intended-use guidance.
 
@@ -87,7 +87,7 @@ The analysis workflows read the synthetic validated sample dataset, evaluate eac
 
 ## Example Walkthrough
 
-During a weekly operational review, three items are evaluated using the same activity signals and scoring rules.
+During an operational review, three items are evaluated using the same activity signals and scoring rules.
 
 ### Sample Operational Input
 
@@ -121,12 +121,12 @@ The full sample run evaluates eight fictional operational items and produces thi
 
 ```text
 .
-+-- analysis/      # Review summaries, trend concepts, and threshold-calibration planning
-+-- data/          # Raw and validated operational data organization
++-- analysis/      # Risk evaluation, threshold sensitivity, and dashboard workflows
++-- data/          # Fictional validated operational data used by executable workflows
 +-- governance/    # Assumptions, limitations, exclusions, and failure modes
 +-- logic/         # Scoring formula, risk factors, thresholds, and intended-use guidance
-+-- reporting/     # Decision-brief and review-summary concepts
-+-- tests/         # Automated tests for scoring and classification behavior
++-- reporting/     # Generated review summaries and dashboard-style outputs
++-- tests/         # Regression tests for scoring, validation, reports, and workflows
 +-- README.md      # Public project overview
 ```
 
@@ -142,6 +142,10 @@ Supporting documentation:
 
 The framework prioritizes transparent risk signals, traceable scoring logic, and human review. Each classification can be tied back to the operational signals and rules that produced it.
 
-## Next Phase
+## Validation And Reproducibility
 
-The next implementation step is to add machine-readable CSV or JSON exports for generated analysis outputs so the reporting layer can support additional review views.
+Continuous integration runs on Python 3.11 and 3.12. Generated reports are committed artifacts, and CI verifies that running the report generators does not leave protected reporting outputs stale.
+
+## Next Feature
+
+The next substantial planned feature is Operational Readiness Assurance: a separate evidence-backed rule layer for evaluating whether required operational controls remain unresolved before work is considered ready. That layer should remain distinct from risk scoring so readiness decisions can be reviewed on their own evidence trail.

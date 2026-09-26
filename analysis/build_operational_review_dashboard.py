@@ -218,7 +218,7 @@ def render_dashboard(
             "## Review Notes",
             "",
             "- Scoring is deterministic and follows the documented weighted rule set.",
-            "- Threshold values are illustrative and should not be treated as production calibration.",
+            "- Threshold values are illustrative and should not be treated as production threshold settings.",
             "- Source data is fictional and intended for prototype review.",
             "- The dashboard supports prioritization and discussion; human operational judgment is still required.",
             "- Sensitivity scenarios are not recommendations and do not change the default scoring configuration.",
@@ -238,6 +238,7 @@ def write_dashboard(
     path.write_text(
         render_dashboard(risk_results, sensitivity_results),
         encoding="utf-8",
+        newline="\n",
     )
 
 

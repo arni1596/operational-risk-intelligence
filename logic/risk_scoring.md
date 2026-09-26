@@ -33,17 +33,17 @@ Risk Score =
 + (Rework Count x 0.1)
 ```
 
-Weights are illustrative and should be calibrated to the operating context before real-world use.
+Weights are illustrative and should be reviewed against the operating context before real-world use.
 
-The Phase 2 implementation in [risk_score.py](risk_score.py) applies this formula, assigns the documented classification, and returns structured reasons for each evaluated item.
+The implementation in [risk_score.py](risk_score.py) applies this formula, assigns the documented classification, and returns structured reasons for each evaluated item.
 
 For review outputs, the exact weighted score is rounded to the nearest whole number using conventional half-up rounding before the classification thresholds are applied. The unrounded weighted score remains available in code for audit and regression testing.
 
-## Compounding Condition
+## Combined Signal Behavior
 
-Items that are both high priority and overdue should move across risk thresholds faster than items meeting only one condition.
+The current model is additive. Each weighted component contributes to the total score, and multiple elevated signals can jointly raise that total enough to cross a review threshold.
 
-This reflects the nonlinear nature of operational failure: multiple moderate signals can combine into a larger review concern.
+There is no nonlinear interaction, multiplier, bonus condition, or compounding adjustment in the implemented scoring model.
 
 ## Risk Thresholds
 
@@ -61,7 +61,6 @@ Risk scores are intended to:
 
 - Focus attention
 - Support escalation discussions
-- Improve early intervention
 - Create a clear explanation trail for review meetings
 
 They are not intended for performance ranking, punitive evaluation, or automated decision-making.

@@ -8,4 +8,4 @@ This directory contains the evaluation workflow used to turn validated operation
 
 [build_operational_review_dashboard.py](build_operational_review_dashboard.py) combines the current risk review and threshold sensitivity outputs into a dashboard-style markdown report for operational review.
 
-Planned analysis extensions include trend analysis across backlog and handoffs, plus machine-readable exports for generated outputs.
+The next substantial planned feature is Operational Readiness Assurance, a separate evidence-backed rule layer that should remain distinct from the existing risk-scoring workflow.

@@ -2,10 +2,9 @@
 
 This directory contains operational data used by the system.
 
-- raw: source data as received, unchanged
-- validated: cleaned and normalized data used for analysis
+- `validated/`: fictional normalized input data used by the executable analysis workflows
 
-Data separation is intentional to preserve traceability and auditability.
+A raw ingestion layer can be introduced later if a real ingestion and normalization example is added.
 
 ## Current Sample Data
 

@@ -255,6 +255,52 @@ class RiskScoreTests(unittest.TestCase):
         self.assertEqual(custom_result.classification, "Watch")
         self.assertEqual(DEFAULT_RISK_CONFIG.overdue_days_weight, Decimal("0.4"))
 
+    def test_config_rejects_invalid_weights(self) -> None:
+        valid_config = {
+            "overdue_days_weight": Decimal("0.4"),
+            "handoff_count_weight": Decimal("0.3"),
+            "priority_weight_weight": Decimal("0.2"),
+            "rework_count_weight": Decimal("0.1"),
+            "stable_upper_bound": 30,
+            "watch_upper_bound": 60,
+        }
+        cases = (
+            ("overdue_days_weight", Decimal("-0.1"), ValueError),
+            ("handoff_count_weight", "0.3", TypeError),
+        )
+
+        for field_name, value, expected_error in cases:
+            with self.subTest(field_name=field_name):
+                payload = dict(valid_config)
+                payload[field_name] = value
+                with self.assertRaises(expected_error):
+                    RiskScoringConfig(**payload)
+
+    def test_config_rejects_invalid_thresholds(self) -> None:
+        valid_config = {
+            "overdue_days_weight": Decimal("0.4"),
+            "handoff_count_weight": Decimal("0.3"),
+            "priority_weight_weight": Decimal("0.2"),
+            "rework_count_weight": Decimal("0.1"),
+            "stable_upper_bound": 30,
+            "watch_upper_bound": 60,
+        }
+        cases = (
+            ("stable_upper_bound", -1, ValueError),
+            ("watch_upper_bound", -1, ValueError),
+            ("stable_upper_bound", True, TypeError),
+            ("watch_upper_bound", False, TypeError),
+            ("stable_upper_bound", 60, ValueError),
+            ("stable_upper_bound", 61, ValueError),
+        )
+
+        for field_name, value, expected_error in cases:
+            with self.subTest(field_name=field_name, value=value):
+                payload = dict(valid_config)
+                payload[field_name] = value
+                with self.assertRaises(expected_error):
+                    RiskScoringConfig(**payload)
+
     def test_sample_dataset_distribution_regression(self) -> None:
         results = [evaluate_item(item) for item in load_operational_items()]
 
@@ -381,6 +427,34 @@ class CsvValidationTests(unittest.TestCase):
 
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0].item_id, "OPS-1")
+
+    def test_duplicate_item_id_is_rejected(self) -> None:
+        path = self.write_csv(
+            "item_id,status,priority_weight,overdue_days,handoff_count,rework_count\n"
+            "OPS-1,Open,10,0,0,0\n"
+            "OPS-1,Open,10,1,0,0\n"
+        )
+        self.addCleanup(path.unlink)
+
+        with self.assertRaisesRegex(
+            CsvValidationError,
+            r"row 3 \(OPS-1\): duplicate item_id; first seen at row 2",
+        ):
+            load_operational_items(path)
+
+    def test_whitespace_normalized_duplicate_item_id_is_rejected(self) -> None:
+        path = self.write_csv(
+            "item_id,status,priority_weight,overdue_days,handoff_count,rework_count\n"
+            "OPS-1,Open,10,0,0,0\n"
+            " OPS-1 ,Open,10,1,0,0\n"
+        )
+        self.addCleanup(path.unlink)
+
+        with self.assertRaisesRegex(
+            CsvValidationError,
+            r"row 3 \(OPS-1\): duplicate item_id; first seen at row 2",
+        ):
+            load_operational_items(path)
 
 
 if __name__ == "__main__":

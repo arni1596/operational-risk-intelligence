@@ -54,3 +54,25 @@ The repository now has separate generated outputs for current risk review and th
 
 ### Next
 Add machine-readable CSV or JSON exports for generated analysis outputs.
+
+## 2026-09-26 - Repository Integrity Hardening
+
+### What changed
+- Added generated-report consistency tests.
+- Added deterministic generated Markdown newline behavior.
+- Added a CI stale-report gate.
+- Added duplicate operational item ID validation.
+- Added regression tests for scoring-configuration validation.
+- Reconciled public documentation with the current source of truth.
+
+### Why
+The repository now has multiple generated decision-support artifacts. Before adding another decision layer, the current implementation needs explicit protection against stale output, ambiguous record identity, and documentation drift.
+
+### Verification
+- `python -m unittest discover -s tests`
+- `python analysis/evaluate_operational_risk.py`
+- `python analysis/analyze_threshold_sensitivity.py`
+- `python analysis/build_operational_review_dashboard.py`
+
+### Next
+Operational Readiness Assurance: add a separate evidence-backed rule layer for reviewing whether required operational controls remain unresolved before work is considered ready.

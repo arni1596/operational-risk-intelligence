@@ -170,7 +170,7 @@ def render_markdown_summary(results: list[ThresholdScenarioResult]) -> str:
         "",
         "## Purpose",
         "",
-        "This report tests how illustrative threshold changes affect review classifications for the fictional sample dataset. It does not recommend changing the default thresholds and does not represent production calibration.",
+        "This report tests how illustrative threshold changes affect review classifications for the fictional sample dataset. It does not recommend changing the default thresholds and does not represent production threshold setting.",
         "",
         "## Scenario Definitions",
         "",
@@ -263,7 +263,11 @@ def write_summary(
 ) -> None:
     """Write threshold sensitivity results to the reporting directory."""
 
-    path.write_text(render_markdown_summary(results), encoding="utf-8")
+    path.write_text(
+        render_markdown_summary(results),
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 def main() -> None:
