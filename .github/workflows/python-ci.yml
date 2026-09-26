@@ -42,6 +42,9 @@ jobs:
       - name: Build operational review dashboard
         run: python analysis/build_operational_review_dashboard.py
 
+      - name: Run operational readiness assurance
+        run: python analysis/evaluate_operational_readiness.py
+
       - name: Check generated reports are committed
         shell: bash
         run: |
@@ -51,6 +54,7 @@ jobs:
             reporting/risk_review_summary.md
             reporting/threshold_sensitivity_summary.md
             reporting/operational_review_dashboard.md
+            reporting/operational_readiness_summary.md
           )
 
           if [ -n "$(git status --porcelain -- "${GENERATED_REPORTS[@]}")" ]; then

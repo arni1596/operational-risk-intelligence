@@ -1,0 +1,6 @@
+initiative_id,initiative_name,description
+INIT-ALPHA,Alpha Operations Readiness,Fictional initiative with all modeled controls satisfied
+INIT-BRAVO,Bravo Service Transition,Fictional initiative with advisory follow-up remaining
+INIT-CHARLIE,Charlie Process Review,Fictional initiative missing one required blocking assessment
+INIT-DELTA,Delta Dependency Closure,Fictional initiative blocked by an unresolved dependency control
+INIT-FOXTROT,Foxtrot Exception Review,Fictional initiative with unresolved blocking exception evidence
