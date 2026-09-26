@@ -76,3 +76,28 @@ The repository now has multiple generated decision-support artifacts. Before add
 
 ### Next
 Operational Readiness Assurance: add a separate evidence-backed rule layer for reviewing whether required operational controls remain unresolved before work is considered ready.
+
+## 2026-09-26 - Operational Readiness Assurance
+
+### What changed
+- Added an explicit readiness policy with blocking and advisory controls.
+- Added a fictional initiative inventory and readiness assessment model.
+- Added evidence-state validation for CURRENT, STALE, and MISSING evidence.
+- Added deterministic decision precedence for READY, READY_WITH_FOLLOW_UP, NEEDS_REVIEW, and BLOCKED.
+- Added missing-assessment handling so required controls remain visible even when no row exists.
+- Added a generated readiness report with decision traces.
+- Added tests for policy validation, data integrity, decision precedence, missing controls, generated reports, and workflow behavior.
+- Extended CI integration to run the readiness workflow and protect the generated readiness report.
+
+### Why
+Risk prioritization does not establish operational readiness. A separate evidence-backed readiness layer provides a clearer answer to whether required controls remain unresolved.
+
+### Verification
+- `python -m unittest discover -s tests`
+- `python analysis/evaluate_operational_risk.py`
+- `python analysis/analyze_threshold_sensitivity.py`
+- `python analysis/build_operational_review_dashboard.py`
+- `python analysis/evaluate_operational_readiness.py`
+
+### Next
+Add readiness-state history and control closure tracking.
