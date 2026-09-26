@@ -170,7 +170,7 @@ def render_markdown_summary(results: list[ThresholdScenarioResult]) -> str:
         "",
         "## Purpose",
         "",
-        "This report tests how illustrative threshold changes affect review classifications for the fictional sample dataset. It does not recommend changing the default thresholds and does not represent production calibration.",
+        "This report tests how illustrative threshold changes affect review classifications for the fictional sample dataset. It does not recommend changing the default thresholds and does not represent production threshold setting.",
         "",
         "## Scenario Definitions",
         "",
