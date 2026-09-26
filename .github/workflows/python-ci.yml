@@ -41,3 +41,24 @@ jobs:
 
       - name: Build operational review dashboard
         run: python analysis/build_operational_review_dashboard.py
+
+      - name: Check generated reports are committed
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          GENERATED_REPORTS=(
+            reporting/risk_review_summary.md
+            reporting/threshold_sensitivity_summary.md
+            reporting/operational_review_dashboard.md
+          )
+
+          if [ -n "$(git status --porcelain -- "${GENERATED_REPORTS[@]}")" ]; then
+            echo "::error::Generated reporting artifacts are stale."
+            echo "Regenerate the reports and commit the resulting changes."
+            git status --short -- "${GENERATED_REPORTS[@]}"
+            git --no-pager diff -- "${GENERATED_REPORTS[@]}"
+            exit 1
+          fi
+
+          echo "Generated reporting artifacts match committed output."

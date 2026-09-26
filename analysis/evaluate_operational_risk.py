@@ -68,14 +68,25 @@ def load_operational_items(path: Path = DEFAULT_INPUT) -> list[OperationalItem]:
         validate_headers(reader.fieldnames, path)
 
         items: list[OperationalItem] = []
+        seen_item_rows: dict[str, int] = {}
         for row_number, row in enumerate(reader, start=2):
             try:
-                items.append(OperationalItem.from_mapping(row))
+                item = OperationalItem.from_mapping(row)
             except (TypeError, ValueError) as exc:
                 item_id = row.get("item_id") or "<missing item_id>"
                 raise CsvValidationError(
                     f"{path} row {row_number} ({item_id}): {exc}"
                 ) from exc
+
+            first_seen_row = seen_item_rows.get(item.item_id)
+            if first_seen_row is not None:
+                raise CsvValidationError(
+                    f"{path} row {row_number} ({item.item_id}): "
+                    f"duplicate item_id; first seen at row {first_seen_row}"
+                )
+
+            seen_item_rows[item.item_id] = row_number
+            items.append(item)
 
     return items
 
@@ -189,7 +200,11 @@ def write_summary(
 ) -> None:
     """Write the review summary to the reporting directory."""
 
-    path.write_text(render_markdown_summary(results), encoding="utf-8")
+    path.write_text(
+        render_markdown_summary(results),
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 def main() -> None:

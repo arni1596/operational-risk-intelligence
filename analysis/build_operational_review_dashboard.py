@@ -238,6 +238,7 @@ def write_dashboard(
     path.write_text(
         render_dashboard(risk_results, sensitivity_results),
         encoding="utf-8",
+        newline="\n",
     )
 
 

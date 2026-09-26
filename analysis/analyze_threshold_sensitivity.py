@@ -263,7 +263,11 @@ def write_summary(
 ) -> None:
     """Write threshold sensitivity results to the reporting directory."""
 
-    path.write_text(render_markdown_summary(results), encoding="utf-8")
+    path.write_text(
+        render_markdown_summary(results),
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 def main() -> None:
