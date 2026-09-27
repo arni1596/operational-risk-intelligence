@@ -203,6 +203,13 @@ class ReadinessAssessment:
         )
         follow_up = normalize_text(self.follow_up, "follow_up", required=False)
 
+        if evidence_state == EvidenceState.CURRENT and not evidence_ref:
+            raise ValueError("CURRENT evidence requires evidence_ref")
+        if evidence_state == EvidenceState.STALE and not evidence_ref:
+            raise ValueError("STALE evidence requires evidence_ref")
+        if evidence_state == EvidenceState.MISSING and evidence_ref:
+            raise ValueError("MISSING evidence cannot include evidence_ref")
+
         if status == AssessmentStatus.PASS:
             if not evidence_ref:
                 raise ValueError("PASS requires evidence_ref")

@@ -29,6 +29,8 @@ Evidence state describes the supporting evidence condition. It is not the same t
 - STALE means evidence exists but is represented as no longer sufficiently current.
 - MISSING means no supporting evidence is available.
 
+CURRENT and STALE indicate an evidence artifact exists and require a non-empty evidence reference. MISSING indicates no supporting evidence artifact is available and must not carry an evidence reference.
+
 Only PASS imposes the stronger invariant that evidence must be CURRENT and referenced. The system validates evidence metadata but does not independently verify external artifact truth.
 
 ## Blocking vs Advisory
@@ -53,6 +55,8 @@ A missing assessment is structurally different from EvidenceState.MISSING:
 - EvidenceState.MISSING means an assessment exists, but supporting evidence is unavailable.
 
 Both can influence readiness, but they represent different states.
+
+A structurally missing assessment has no evidence state because no assessment exists.
 
 ## Evidence Coverage
 Evidence coverage counts controls with a present assessment, CURRENT evidence, and a non-empty evidence reference. It measures evidence availability, not the percentage of controls passed, percent ready, likelihood of success, or approval status.

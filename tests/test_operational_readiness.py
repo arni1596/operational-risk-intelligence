@@ -231,6 +231,8 @@ class OperationalReadinessWorkflowTests(unittest.TestCase):
         )
         self.assertIn("SYN-BRAVO-MONITORING", markdown)
         self.assertIn("| INIT-DELTA | DEPENDENCY_RESOLUTION | DEPENDENCY_RESOLUTION | FAIL | CURRENT | Technical Owner | SYN-DELTA-DEPENDENCY |", markdown)
+        self.assertIn("| INIT-CHARLIE | TRACEABILITY | BLOCKING | NOT_ASSESSED | N/A |", markdown)
+        self.assertIn("| INIT-FOXTROT | EXCEPTION_HANDLING | BLOCKING | UNKNOWN | MISSING |", markdown)
         self.assertIn("| INIT-DELTA | BLOCKED |", markdown)
         self.assertIn("TRACEABILITY", markdown)
 

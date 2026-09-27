@@ -232,6 +232,18 @@ def next_review_focus(evaluation: ReadinessEvaluation) -> str:
     return base
 
 
+def display_assessment_state(trace) -> str:
+    if trace.assessment_state is None:
+        return "NOT_ASSESSED"
+    return trace.assessment_state.value
+
+
+def display_evidence_state(trace) -> str:
+    if trace.assessment_state is None:
+        return "N/A"
+    return trace.evidence_state.value if trace.evidence_state else "MISSING"
+
+
 def render_markdown_summary(evaluations: list[ReadinessEvaluation]) -> str:
     counts = decision_counts(evaluations)
     queue = review_queue(evaluations)
@@ -316,13 +328,10 @@ def render_markdown_summary(evaluations: list[ReadinessEvaluation]) -> str:
             ]
         )
         for evaluation, trace in unresolved_rows:
-            assessment_state = (
-                trace.assessment_state.value if trace.assessment_state else "MISSING"
-            )
-            evidence_state = trace.evidence_state.value if trace.evidence_state else "MISSING"
             lines.append(
                 f"| {evaluation.initiative_id} | {trace.control_id} | {trace.criticality.value} | "
-                f"{assessment_state} | {evidence_state} | {trace.owner_role or 'Not provided'} | "
+                f"{display_assessment_state(trace)} | {display_evidence_state(trace)} | "
+                f"{trace.owner_role or 'Not provided'} | "
                 f"{trace.evidence_ref or 'Not provided'} | "
                 f"{trace.follow_up or 'Not provided'} |"
             )
@@ -400,8 +409,8 @@ def render_markdown_summary(evaluations: list[ReadinessEvaluation]) -> str:
                     continue
                 lines.append(
                     f"| {trace.control_id} | {trace.criticality.value} | "
-                    f"{trace.assessment_state.value if trace.assessment_state else 'MISSING'} | "
-                    f"{trace.evidence_state.value if trace.evidence_state else 'MISSING'} | "
+                    f"{display_assessment_state(trace)} | "
+                    f"{display_evidence_state(trace)} | "
                     f"{trace.owner_role or 'Not provided'} | {trace.follow_up or 'Not provided'} | "
                     f"{trace.decision_effect} |"
                 )

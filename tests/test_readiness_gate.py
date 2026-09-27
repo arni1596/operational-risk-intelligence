@@ -116,6 +116,7 @@ class ReadinessDecisionTests(unittest.TestCase):
         base["DEPENDENCY_RESOLUTION"] = assessment(
             "DEPENDENCY_RESOLUTION",
             AssessmentStatus.FAIL,
+            EvidenceState.MISSING,
             follow_up="Resolve dependency owner handoff.",
             evidence_ref="",
         )
@@ -207,6 +208,7 @@ class ReadinessDecisionTests(unittest.TestCase):
         rows["SUPPORT_READINESS"] = assessment(
             "SUPPORT_READINESS",
             AssessmentStatus.FAIL,
+            EvidenceState.MISSING,
             follow_up="Create support handoff note.",
             evidence_ref="",
         )
@@ -332,6 +334,48 @@ class ReadinessAssessmentValidationTests(unittest.TestCase):
                         evidence_ref="",
                         follow_up=follow_up,
                     )
+
+    def test_evidence_state_requires_consistent_evidence_reference(self) -> None:
+        cases = (
+            (AssessmentStatus.FAIL, EvidenceState.CURRENT, "", "CURRENT evidence requires evidence_ref"),
+            (AssessmentStatus.UNKNOWN, EvidenceState.CURRENT, "", "CURRENT evidence requires evidence_ref"),
+            (AssessmentStatus.FAIL, EvidenceState.STALE, "", "STALE evidence requires evidence_ref"),
+            (AssessmentStatus.UNKNOWN, EvidenceState.STALE, "", "STALE evidence requires evidence_ref"),
+            (AssessmentStatus.FAIL, EvidenceState.MISSING, "SYN-1", "MISSING evidence cannot include evidence_ref"),
+            (AssessmentStatus.UNKNOWN, EvidenceState.MISSING, "SYN-1", "MISSING evidence cannot include evidence_ref"),
+        )
+
+        for status, evidence_state, evidence_ref, expected_message in cases:
+            with self.subTest(status=status, evidence_state=evidence_state):
+                with self.assertRaisesRegex(ValueError, expected_message):
+                    assessment(
+                        "TEST_EVIDENCE",
+                        status=status,
+                        evidence_state=evidence_state,
+                        evidence_ref=evidence_ref,
+                        follow_up="Resolve evidence issue.",
+                    )
+
+    def test_unresolved_status_accepts_consistent_evidence_states(self) -> None:
+        cases = (
+            (AssessmentStatus.FAIL, EvidenceState.CURRENT, "SYN-CURRENT"),
+            (AssessmentStatus.UNKNOWN, EvidenceState.STALE, "SYN-STALE"),
+            (AssessmentStatus.UNKNOWN, EvidenceState.MISSING, ""),
+        )
+
+        for status, evidence_state, evidence_ref in cases:
+            with self.subTest(status=status, evidence_state=evidence_state):
+                result = assessment(
+                    "TEST_EVIDENCE",
+                    status=status,
+                    evidence_state=evidence_state,
+                    evidence_ref=evidence_ref,
+                    follow_up="Resolve evidence issue.",
+                )
+
+                self.assertEqual(result.status, status)
+                self.assertEqual(result.evidence_state, evidence_state)
+                self.assertEqual(result.evidence_ref, evidence_ref)
 
 
 if __name__ == "__main__":

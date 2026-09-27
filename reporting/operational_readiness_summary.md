@@ -32,7 +32,7 @@ Generated from fictional readiness inputs using the explicit readiness policy in
 | Initiative | Control | Criticality | Assessment | Evidence State | Owner Role | Evidence Ref | Follow-Up |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | INIT-FOXTROT | EXCEPTION_HANDLING | BLOCKING | UNKNOWN | MISSING | Process Owner | Not provided | Confirm whether exception handling evidence is required. |
-| INIT-CHARLIE | TRACEABILITY | BLOCKING | MISSING | MISSING | Not provided | Not provided | Not provided |
+| INIT-CHARLIE | TRACEABILITY | BLOCKING | NOT_ASSESSED | N/A | Not provided | Not provided | Not provided |
 | INIT-BRAVO | MONITORING_RECONCILIATION | ADVISORY | UNKNOWN | STALE | Operations Reviewer | SYN-BRAVO-MONITORING | Revalidate monitoring evidence before closure. |
 
 ## Advisory Follow-Up
@@ -91,7 +91,7 @@ Current evidence coverage measures the availability of CURRENT referenced eviden
 
 | Control | Criticality | Assessment | Evidence State | Owner Role | Follow-Up | Decision Effect |
 | --- | --- | --- | --- | --- | --- | --- |
-| TRACEABILITY | BLOCKING | MISSING | MISSING | Not provided | Not provided | missing blocking assessment requires review |
+| TRACEABILITY | BLOCKING | NOT_ASSESSED | N/A | Not provided | Not provided | missing blocking assessment requires review |
 
 ### INIT-DELTA: Delta Dependency Closure
 
