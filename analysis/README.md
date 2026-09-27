@@ -8,4 +8,6 @@ This directory contains the evaluation workflow used to turn validated operation
 
 [build_operational_review_dashboard.py](build_operational_review_dashboard.py) combines the current risk review and threshold sensitivity outputs into a dashboard-style markdown report for operational review.
 
-The next substantial planned feature is Operational Readiness Assurance, a separate evidence-backed rule layer that should remain distinct from the existing risk-scoring workflow.
+[evaluate_operational_readiness.py](evaluate_operational_readiness.py) reads the readiness initiative inventory and assessment snapshot, validates referential integrity, evaluates every initiative against the readiness policy, preserves missing controls, ranks initiatives for review, and writes a readiness summary to the reporting directory.
+
+Risk scoring and readiness assurance are intentionally separate workflows. Risk answers what deserves attention; readiness answers which required evidence or controls remain unresolved.

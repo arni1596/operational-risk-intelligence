@@ -11,6 +11,12 @@ from analysis.evaluate_operational_risk import (
     load_operational_items,
     render_markdown_summary as render_risk_summary,
 )
+from analysis.evaluate_operational_readiness import (
+    evaluate_readiness_dataset,
+    load_readiness_assessments,
+    load_readiness_initiatives,
+    render_markdown_summary as render_readiness_summary,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +29,15 @@ class GeneratedReportConsistencyTests(unittest.TestCase):
         rendered_content: str,
         regeneration_command: str,
     ) -> None:
+        relative_path = report_path.relative_to(ROOT)
+        self.assertTrue(
+            report_path.exists(),
+            (
+                f"{relative_path} is missing.\n\n"
+                f"Regenerate with:\n{regeneration_command}\n\n"
+                "Then commit the generated artifact."
+            ),
+        )
         report_bytes = report_path.read_bytes()
         self.assertNotIn(
             b"\r\n",
@@ -30,7 +45,6 @@ class GeneratedReportConsistencyTests(unittest.TestCase):
             f"{report_path.relative_to(ROOT)} contains CRLF line endings.",
         )
         committed_content = report_bytes.decode("utf-8")
-        relative_path = report_path.relative_to(ROOT)
 
         self.assertEqual(
             committed_content,
@@ -71,6 +85,17 @@ class GeneratedReportConsistencyTests(unittest.TestCase):
             ROOT / "reporting" / "operational_review_dashboard.md",
             render_dashboard(risk_results, sensitivity_results),
             "python analysis/build_operational_review_dashboard.py",
+        )
+
+    def test_operational_readiness_summary_matches_renderer(self) -> None:
+        initiatives = load_readiness_initiatives()
+        assessments = load_readiness_assessments(initiatives)
+        evaluations = evaluate_readiness_dataset(initiatives, assessments)
+
+        self.assert_generated_report_current(
+            ROOT / "reporting" / "operational_readiness_summary.md",
+            render_readiness_summary(evaluations),
+            "python analysis/evaluate_operational_readiness.py",
         )
 
 

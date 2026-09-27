@@ -21,12 +21,15 @@ The review model brings those signals together so operational risk can be evalua
 Implemented now:
 
 - Python scoring engine in [logic/risk_score.py](logic/risk_score.py)
+- Operational readiness policy and decision engine in [logic/readiness_gate.py](logic/readiness_gate.py)
 - Synthetic validated sample data in [data/validated/sample_operational_items.csv](data/validated/sample_operational_items.csv)
 - Executable evaluation workflow in [analysis/evaluate_operational_risk.py](analysis/evaluate_operational_risk.py)
 - Threshold sensitivity workflow in [analysis/analyze_threshold_sensitivity.py](analysis/analyze_threshold_sensitivity.py)
 - Dashboard-style review report in [analysis/build_operational_review_dashboard.py](analysis/build_operational_review_dashboard.py)
+- Operational readiness workflow in [analysis/evaluate_operational_readiness.py](analysis/evaluate_operational_readiness.py)
 - Generated review summary in [reporting/risk_review_summary.md](reporting/risk_review_summary.md)
 - Generated operational review dashboard in [reporting/operational_review_dashboard.md](reporting/operational_review_dashboard.md)
+- Generated readiness assurance summary in [reporting/operational_readiness_summary.md](reporting/operational_readiness_summary.md)
 - Automated regression tests in [tests/](tests/) for scoring, validation, threshold sensitivity, dashboard behavior, and generated-report consistency
 
 ## How It Works
@@ -81,9 +84,43 @@ python -m unittest discover -s tests
 python analysis/evaluate_operational_risk.py
 python analysis/analyze_threshold_sensitivity.py
 python analysis/build_operational_review_dashboard.py
+python analysis/evaluate_operational_readiness.py
 ```
 
-The analysis workflows read the synthetic validated sample dataset, evaluate each operational item, test illustrative threshold scenarios, and write review outputs in the reporting directory.
+The analysis workflows read synthetic validated sample data, evaluate operational risk signals, test illustrative threshold scenarios, evaluate modeled readiness controls, and write review outputs in the reporting directory.
+
+## Two Decision Layers
+
+The repository now separates two related but different review questions:
+
+| Layer | Question Answered | Main Output |
+| --- | --- | --- |
+| Operational risk | What deserves attention? | Risk score, flag, and review queue |
+| Operational readiness | What required evidence or controls remain unresolved? | Readiness decision, unresolved controls, and decision trace |
+
+A high-risk item is not automatically unready, and a low-risk item may still lack required readiness evidence. Keeping the models separate prevents one signal from substituting for another.
+
+```text
+Operational Activity
+        |
+Deterministic Risk Evaluation
+        |
+Review Prioritization
+
+Readiness Policy
+      +
+Initiative Inventory
+      +
+Evidence Assessments
+        |
+Validation
+        |
+Deterministic Readiness Decision
+        |
+Decision Trace
+        |
+Human Review
+```
 
 ## Example Walkthrough
 
@@ -121,12 +158,12 @@ The full sample run evaluates eight fictional operational items and produces thi
 
 ```text
 .
-+-- analysis/      # Risk evaluation, threshold sensitivity, and dashboard workflows
-+-- data/          # Fictional validated operational data used by executable workflows
++-- analysis/      # Risk, threshold, dashboard, and readiness workflows
++-- data/          # Fictional validated operational and readiness data
 +-- governance/    # Assumptions, limitations, exclusions, and failure modes
-+-- logic/         # Scoring formula, risk factors, thresholds, and intended-use guidance
-+-- reporting/     # Generated review summaries and dashboard-style outputs
-+-- tests/         # Regression tests for scoring, validation, reports, and workflows
++-- logic/         # Risk scoring and readiness decision rules
++-- reporting/     # Generated review summaries, dashboard outputs, and readiness summaries
++-- tests/         # Regression tests for scoring, readiness, validation, reports, and workflows
 +-- README.md      # Public project overview
 ```
 
@@ -135,6 +172,7 @@ Supporting documentation:
 - [analysis/README.md](analysis/README.md)
 - [data/README.md](data/README.md)
 - [governance/limitations.md](governance/limitations.md)
+- [governance/readiness_assurance.md](governance/readiness_assurance.md)
 - [logic/risk_scoring.md](logic/risk_scoring.md)
 - [reporting/README.md](reporting/README.md)
 
@@ -146,6 +184,12 @@ The framework prioritizes transparent risk signals, traceable scoring logic, and
 
 Continuous integration runs on Python 3.11 and 3.12. Generated reports are committed artifacts, and CI verifies that running the report generators does not leave protected reporting outputs stale.
 
+## Readiness Boundaries
+
+Operational Readiness Assurance uses an explicit policy, initiative inventory, PASS / FAIL / UNKNOWN assessment states, CURRENT / STALE / MISSING evidence states, missing-assessment handling, and deterministic decision traces.
+
+READY means the modeled controls satisfy the current policy snapshot. It does not authorize deployment, certify compliance, guarantee success, or replace human organizational judgment.
+
 ## Next Feature
 
-The next substantial planned feature is Operational Readiness Assurance: a separate evidence-backed rule layer for evaluating whether required operational controls remain unresolved before work is considered ready. That layer should remain distinct from risk scoring so readiness decisions can be reviewed on their own evidence trail.
+The next substantial planned feature is readiness-state history and control closure tracking so changes in unresolved controls can be reviewed across snapshots without changing the current deterministic decision rules.

@@ -1,7 +1,7 @@
 ﻿# Limitations and Failure Modes
 
 ## Scope
-This repository provides batch analysis, deterministic risk logic, threshold sensitivity review, and generated reporting artifacts intended to support review and escalation discussions.
+This repository provides batch analysis, deterministic risk logic, threshold sensitivity review, operational readiness assurance, and generated reporting artifacts intended to support review and escalation discussions.
 
 ## Intentional exclusions
 The system intentionally does not include:
@@ -17,6 +17,8 @@ These exclusions reduce complexity and avoid false certainty while the core logi
 - Risk weights and thresholds are illustrative and require review per organization
 - Outputs depend on baseline data integrity
 - The current scoring model is intentionally linear and does not model interactions among signals
+- Readiness evidence metadata is trusted input and external artifact truth is not independently verified
+- Readiness decisions are snapshot-based and do not prove future performance
 - The generated reports are static outputs, not scheduled monitoring workflows
 
 ## Failure modes
