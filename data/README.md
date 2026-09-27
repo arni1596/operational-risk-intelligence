@@ -14,4 +14,4 @@ A raw ingestion layer can be introduced later if a real ingestion and normalizat
 
 [validated/sample_readiness_assessments.csv](validated/sample_readiness_assessments.csv) contains fictional readiness assessments for initiative/control pairs. Assessments report status, owner role, evidence reference, evidence state, and follow-up without redefining policy criticality.
 
-The sample data does not represent a real employer, customer, Salesforce environment, or confidential operational system.
+The sample data does not represent a real employer, customer, or confidential operational system.

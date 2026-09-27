@@ -11,7 +11,7 @@ from analysis.evaluate_operational_readiness import (
     review_queue,
     write_summary,
 )
-from logic.readiness_gate import ReadinessDecision
+from logic.readiness_gate import AssessmentStatus, EvidenceState, ReadinessDecision
 
 
 class ReadinessCsvValidationTests(unittest.TestCase):
@@ -144,6 +144,49 @@ class OperationalReadinessWorkflowTests(unittest.TestCase):
         self.assertEqual(by_id["INIT-CHARLIE"].blocking_missing, ("TRACEABILITY",))
         self.assertEqual(by_id["INIT-DELTA"].blocking_failures, ("DEPENDENCY_RESOLUTION",))
 
+    def test_sample_dataset_demonstrates_all_evidence_states(self) -> None:
+        _, assessments, _ = self.readiness_inputs()
+
+        self.assertEqual(
+            {assessment.evidence_state for assessment in assessments},
+            {EvidenceState.CURRENT, EvidenceState.STALE, EvidenceState.MISSING},
+        )
+
+    def test_bravo_stale_advisory_scenario_remains_follow_up(self) -> None:
+        _, assessments, evaluations = self.readiness_inputs()
+        by_id = {result.initiative_id: result for result in evaluations}
+        bravo_monitoring = next(
+            assessment
+            for assessment in assessments
+            if assessment.initiative_id == "INIT-BRAVO"
+            and assessment.control_id == "MONITORING_RECONCILIATION"
+        )
+
+        self.assertEqual(bravo_monitoring.status, AssessmentStatus.UNKNOWN)
+        self.assertEqual(bravo_monitoring.evidence_state, EvidenceState.STALE)
+        self.assertEqual(bravo_monitoring.evidence_ref, "SYN-BRAVO-MONITORING")
+        self.assertEqual(
+            by_id["INIT-BRAVO"].decision,
+            ReadinessDecision.READY_WITH_FOLLOW_UP,
+        )
+        self.assertEqual(
+            by_id["INIT-BRAVO"].stale_evidence_controls,
+            ("MONITORING_RECONCILIATION",),
+        )
+        self.assertEqual(by_id["INIT-BRAVO"].evidence_coverage_percentage, "92.3%")
+
+    def test_delta_blocker_can_have_full_current_evidence_coverage(self) -> None:
+        _, _, evaluations = self.readiness_inputs()
+        delta = {
+            result.initiative_id: result
+            for result in evaluations
+        }["INIT-DELTA"]
+
+        self.assertEqual(delta.decision, ReadinessDecision.BLOCKED)
+        self.assertEqual(delta.blocking_failures, ("DEPENDENCY_RESOLUTION",))
+        self.assertEqual(delta.current_evidence_count, delta.expected_control_count)
+        self.assertEqual(delta.evidence_coverage_percentage, "100.0%")
+
     def test_initiative_with_zero_assessments_remains_visible(self) -> None:
         initiatives = load_readiness_initiatives()
         zero_assessment_initiative = [item for item in initiatives if item.initiative_id == "INIT-ALPHA"]
@@ -182,6 +225,12 @@ class OperationalReadinessWorkflowTests(unittest.TestCase):
 
         self.assertIn("READY does not authorize deployment", markdown)
         self.assertIn("no numerical readiness score exists", markdown)
+        self.assertIn(
+            "Current evidence coverage measures the availability of CURRENT referenced evidence, not control success.",
+            markdown,
+        )
+        self.assertIn("SYN-BRAVO-MONITORING", markdown)
+        self.assertIn("| INIT-DELTA | DEPENDENCY_RESOLUTION | DEPENDENCY_RESOLUTION | FAIL | CURRENT | Technical Owner | SYN-DELTA-DEPENDENCY |", markdown)
         self.assertIn("| INIT-DELTA | BLOCKED |", markdown)
         self.assertIn("TRACEABILITY", markdown)
 

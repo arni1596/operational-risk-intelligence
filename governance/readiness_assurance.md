@@ -16,18 +16,20 @@ Policy defines which controls are required and whether each control is blocking 
 The initiative inventory defines the population under review. An initiative with no assessment rows is still evaluated against the policy, so missing controls remain visible.
 
 ## Assessment Status Semantics
-- PASS means evidence supports that the requirement is satisfied.
-- FAIL means evidence supports that the requirement is not satisfied.
-- UNKNOWN means there is not enough verified information to conclude PASS or FAIL.
+- PASS means the requirement is represented as satisfied. PASS requires a valid owner, a non-empty evidence reference, and CURRENT evidence.
+- FAIL means the requirement is known not to be satisfied. FAIL may coexist with CURRENT, STALE, or MISSING evidence depending on the nature of the failure. For example, CURRENT evidence may explicitly prove a dependency remains unresolved, while MISSING required evidence may itself establish that an evidence-dependent requirement is not satisfied.
+- UNKNOWN means available verified information is insufficient to conclude whether the requirement is satisfied. UNKNOWN may coexist with CURRENT, STALE, or MISSING evidence depending on what information exists.
 
 UNKNOWN is preserved as a first-class state and is not collapsed into PASS or FAIL.
 
 ## Evidence State Semantics
+Evidence state describes the supporting evidence condition. It is not the same thing as assessment status.
+
 - CURRENT means the assessment references evidence represented as current in the synthetic snapshot.
 - STALE means evidence exists but is represented as no longer sufficiently current.
 - MISSING means no supporting evidence is available.
 
-Stale or missing evidence cannot support PASS.
+Only PASS imposes the stronger invariant that evidence must be CURRENT and referenced. The system validates evidence metadata but does not independently verify external artifact truth.
 
 ## Blocking vs Advisory
 Blocking controls determine whether readiness can advance. Advisory controls can create follow-up without blocking readiness when all blocking controls pass.
@@ -45,8 +47,17 @@ Percentages never override precedence.
 ## Missing Assessment Behavior
 Missing controls are not inserted into the input data and are not treated as success. Evaluation reports missing blocking and advisory controls separately from UNKNOWN assessments.
 
+A missing assessment is structurally different from EvidenceState.MISSING:
+
+- Missing assessment means no assessment row exists for a required policy control.
+- EvidenceState.MISSING means an assessment exists, but supporting evidence is unavailable.
+
+Both can influence readiness, but they represent different states.
+
 ## Evidence Coverage
-Evidence coverage counts controls with a present assessment, CURRENT evidence, and a non-empty evidence reference. It is descriptive context only, not a readiness score.
+Evidence coverage counts controls with a present assessment, CURRENT evidence, and a non-empty evidence reference. It measures evidence availability, not the percentage of controls passed, percent ready, likelihood of success, or approval status.
+
+A failing control can have CURRENT evidence. An initiative may therefore have 100% evidence coverage and still be BLOCKED. This is intentional.
 
 ## Decision Trace
 Each evaluated control has a trace showing the policy control, criticality, assessment state, evidence state, owner role, evidence reference, follow-up, and contribution to the final decision.

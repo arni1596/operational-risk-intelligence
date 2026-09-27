@@ -15,7 +15,7 @@ Generated from fictional readiness inputs using the explicit readiness policy in
 
 | Rank | Initiative | Decision | Blocking Failures | Blocking Unknowns | Blocking Missing | Advisory Follow-Ups | Current Evidence | Next Review Focus |
 | ---: | --- | --- | ---: | ---: | ---: | ---: | --- | --- |
-| 1 | INIT-DELTA | BLOCKED | 1 | 0 | 0 | 0 | 12/13 (92.3%) | Resolve blocking failed controls before readiness can advance. Focus: DEPENDENCY_RESOLUTION. |
+| 1 | INIT-DELTA | BLOCKED | 1 | 0 | 0 | 0 | 13/13 (100.0%) | Resolve blocking failed controls before readiness can advance. Focus: DEPENDENCY_RESOLUTION. |
 | 2 | INIT-FOXTROT | NEEDS_REVIEW | 0 | 1 | 0 | 0 | 12/13 (92.3%) | Resolve blocking unknown or missing controls and capture current evidence. Focus: EXCEPTION_HANDLING. |
 | 3 | INIT-CHARLIE | NEEDS_REVIEW | 0 | 0 | 1 | 0 | 12/13 (92.3%) | Resolve blocking unknown or missing controls and capture current evidence. Focus: TRACEABILITY. |
 | 4 | INIT-BRAVO | READY_WITH_FOLLOW_UP | 0 | 0 | 0 | 1 | 12/13 (92.3%) | Track advisory unresolved controls while preserving blocking-control evidence. Focus: MONITORING_RECONCILIATION. |
@@ -25,32 +25,32 @@ Generated from fictional readiness inputs using the explicit readiness policy in
 
 | Initiative | Control | Area | Status | Evidence State | Owner Role | Evidence Ref | Follow-Up |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| INIT-DELTA | DEPENDENCY_RESOLUTION | DEPENDENCY_RESOLUTION | FAIL | MISSING | Technical Owner | Not provided | Resolve dependency ownership before readiness can advance. |
+| INIT-DELTA | DEPENDENCY_RESOLUTION | DEPENDENCY_RESOLUTION | FAIL | CURRENT | Technical Owner | SYN-DELTA-DEPENDENCY | Resolve documented dependency gap before readiness can advance. |
 
 ## Unknown And Missing Controls
 
-| Initiative | Control | Criticality | Assessment | Evidence State | Owner Role | Follow-Up |
-| --- | --- | --- | --- | --- | --- | --- |
-| INIT-FOXTROT | EXCEPTION_HANDLING | BLOCKING | UNKNOWN | MISSING | Process Owner | Confirm whether exception handling evidence is required. |
-| INIT-CHARLIE | TRACEABILITY | BLOCKING | MISSING | MISSING | Not provided | Not provided |
-| INIT-BRAVO | MONITORING_RECONCILIATION | ADVISORY | UNKNOWN | MISSING | Operations Reviewer | Confirm reconciliation evidence before closure. |
+| Initiative | Control | Criticality | Assessment | Evidence State | Owner Role | Evidence Ref | Follow-Up |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| INIT-FOXTROT | EXCEPTION_HANDLING | BLOCKING | UNKNOWN | MISSING | Process Owner | Not provided | Confirm whether exception handling evidence is required. |
+| INIT-CHARLIE | TRACEABILITY | BLOCKING | MISSING | MISSING | Not provided | Not provided | Not provided |
+| INIT-BRAVO | MONITORING_RECONCILIATION | ADVISORY | UNKNOWN | STALE | Operations Reviewer | SYN-BRAVO-MONITORING | Revalidate monitoring evidence before closure. |
 
 ## Advisory Follow-Up
 
-| Initiative | Control | Status | Evidence State | Owner Role | Follow-Up |
-| --- | --- | --- | --- | --- | --- |
-| INIT-BRAVO | MONITORING_RECONCILIATION | UNKNOWN | MISSING | Operations Reviewer | Confirm reconciliation evidence before closure. |
+| Initiative | Control | Status | Evidence State | Owner Role | Evidence Ref | Follow-Up |
+| --- | --- | --- | --- | --- | --- | --- |
+| INIT-BRAVO | MONITORING_RECONCILIATION | UNKNOWN | STALE | Operations Reviewer | SYN-BRAVO-MONITORING | Revalidate monitoring evidence before closure. |
 
 ## Evidence Coverage
 
-Evidence coverage is descriptive context, not a readiness score.
+Current evidence coverage measures the availability of CURRENT referenced evidence, not control success. It is descriptive context, not a readiness score.
 
 | Initiative | Current Evidence | Evidence Coverage | Decision |
 | --- | ---: | ---: | --- |
 | INIT-ALPHA | 13/13 | 100.0% | READY |
 | INIT-BRAVO | 12/13 | 92.3% | READY_WITH_FOLLOW_UP |
 | INIT-CHARLIE | 12/13 | 92.3% | NEEDS_REVIEW |
-| INIT-DELTA | 12/13 | 92.3% | BLOCKED |
+| INIT-DELTA | 13/13 | 100.0% | BLOCKED |
 | INIT-FOXTROT | 12/13 | 92.3% | NEEDS_REVIEW |
 
 ## Initiative Detail
@@ -77,7 +77,7 @@ Evidence coverage is descriptive context, not a readiness score.
 
 | Control | Criticality | Assessment | Evidence State | Owner Role | Follow-Up | Decision Effect |
 | --- | --- | --- | --- | --- | --- | --- |
-| MONITORING_RECONCILIATION | ADVISORY | UNKNOWN | MISSING | Operations Reviewer | Confirm reconciliation evidence before closure. | advisory unknown requires follow-up |
+| MONITORING_RECONCILIATION | ADVISORY | UNKNOWN | STALE | Operations Reviewer | Revalidate monitoring evidence before closure. | advisory unknown requires follow-up |
 
 ### INIT-CHARLIE: Charlie Process Review
 
@@ -101,11 +101,11 @@ Evidence coverage is descriptive context, not a readiness score.
 - Expected controls: 13
 - Assessed controls: 13
 - Unresolved controls: 1
-- Evidence coverage: 12/13 (92.3%)
+- Evidence coverage: 13/13 (100.0%)
 
 | Control | Criticality | Assessment | Evidence State | Owner Role | Follow-Up | Decision Effect |
 | --- | --- | --- | --- | --- | --- | --- |
-| DEPENDENCY_RESOLUTION | BLOCKING | FAIL | MISSING | Technical Owner | Resolve dependency ownership before readiness can advance. | blocking failure blocks readiness |
+| DEPENDENCY_RESOLUTION | BLOCKING | FAIL | CURRENT | Technical Owner | Resolve documented dependency gap before readiness can advance. | blocking failure blocks readiness |
 
 ### INIT-FOXTROT: Foxtrot Exception Review
 

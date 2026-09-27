@@ -311,8 +311,8 @@ def render_markdown_summary(evaluations: list[ReadinessEvaluation]) -> str:
     if unresolved_rows:
         lines.extend(
             [
-                "| Initiative | Control | Criticality | Assessment | Evidence State | Owner Role | Follow-Up |",
-                "| --- | --- | --- | --- | --- | --- | --- |",
+                "| Initiative | Control | Criticality | Assessment | Evidence State | Owner Role | Evidence Ref | Follow-Up |",
+                "| --- | --- | --- | --- | --- | --- | --- | --- |",
             ]
         )
         for evaluation, trace in unresolved_rows:
@@ -323,6 +323,7 @@ def render_markdown_summary(evaluations: list[ReadinessEvaluation]) -> str:
             lines.append(
                 f"| {evaluation.initiative_id} | {trace.control_id} | {trace.criticality.value} | "
                 f"{assessment_state} | {evidence_state} | {trace.owner_role or 'Not provided'} | "
+                f"{trace.evidence_ref or 'Not provided'} | "
                 f"{trace.follow_up or 'Not provided'} |"
             )
     else:
@@ -338,8 +339,8 @@ def render_markdown_summary(evaluations: list[ReadinessEvaluation]) -> str:
     if advisory_rows:
         lines.extend(
             [
-                "| Initiative | Control | Status | Evidence State | Owner Role | Follow-Up |",
-                "| --- | --- | --- | --- | --- | --- |",
+                "| Initiative | Control | Status | Evidence State | Owner Role | Evidence Ref | Follow-Up |",
+                "| --- | --- | --- | --- | --- | --- | --- |",
             ]
         )
         for evaluation, trace in advisory_rows:
@@ -347,7 +348,8 @@ def render_markdown_summary(evaluations: list[ReadinessEvaluation]) -> str:
                 f"| {evaluation.initiative_id} | {trace.control_id} | "
                 f"{trace.assessment_state.value if trace.assessment_state else 'MISSING'} | "
                 f"{trace.evidence_state.value if trace.evidence_state else 'MISSING'} | "
-                f"{trace.owner_role or 'Not provided'} | {trace.follow_up or 'Not provided'} |"
+                f"{trace.owner_role or 'Not provided'} | {trace.evidence_ref or 'Not provided'} | "
+                f"{trace.follow_up or 'Not provided'} |"
             )
     else:
         lines.append("No advisory follow-up is present in the current sample.")
@@ -357,7 +359,7 @@ def render_markdown_summary(evaluations: list[ReadinessEvaluation]) -> str:
             "",
             "## Evidence Coverage",
             "",
-            "Evidence coverage is descriptive context, not a readiness score.",
+            "Current evidence coverage measures the availability of CURRENT referenced evidence, not control success. It is descriptive context, not a readiness score.",
             "",
             "| Initiative | Current Evidence | Evidence Coverage | Decision |",
             "| --- | ---: | ---: | --- |",
